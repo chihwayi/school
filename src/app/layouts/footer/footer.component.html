@@ -1,0 +1,29 @@
+<footer class="footer" *ngIf="isLoggedIn">
+  <div class="container-fluid">
+    <div class="footer-content">
+      <div class="footer-info">
+        <div class="school-info" *ngIf="schoolInfo">
+          <span class="school-name">{{ schoolInfo.name }}</span>
+          <span class="separator" *ngIf="schoolInfo?.website">|</span>
+          <a [href]="schoolInfo.website" target="_blank" *ngIf="schoolInfo?.website" class="school-website">
+            {{ schoolInfo.website }}
+          </a>
+        </div>
+        <p class="copyright">
+          &copy; {{ currentYear }} {{ schoolInfo?.name || 'School Management System' }}. All rights reserved.
+        </p>
+      </div>
+      
+      <div class="contact-info" *ngIf="schoolInfo?.contactEmail || schoolInfo?.contactPhone">
+        <div *ngIf="schoolInfo?.contactEmail" class="contact-item">
+          <span class="material-icons">email</span>
+          <a [href]="'mailto:' + schoolInfo?.contactEmail">{{ schoolInfo?.contactEmail }}</a>
+        </div>
+        <div *ngIf="schoolInfo?.contactPhone" class="contact-item">
+          <span class="material-icons">phone</span>
+          <a [href]="'tel:' + schoolInfo?.contactPhone">{{ schoolInfo?.contactPhone }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

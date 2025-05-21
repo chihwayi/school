@@ -1,0 +1,156 @@
+$primary-color: #3f51b5;
+$border-color: #e0e0e0;
+$primary-text: #333333;
+$secondary-text: #757575;
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  color: #333;
+  height: 100vh; /* Full viewport height */
+  border-right: 1px solid #e0e0e0;
+  transition: width 0.3s ease;
+  width: 250px;
+  overflow-x: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: fixed; /* Fixed position for scroll behavior */
+  top: 0;
+  left: 0;
+  z-index: 1001; /* Higher than header */
+  
+  &:not(.expanded) {
+    width: 60px;
+  }
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 64px;
+  padding: 0 8px;
+  border-bottom: 1px solid $border-color;
+  
+  .toggle-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    color: $primary-text;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.menu-group {
+  margin-bottom: 16px;
+  
+  .menu-group-title {
+    padding: 8px 16px;
+    color: $secondary-text;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .menu-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      padding: 0;
+      margin: 4px 0;
+      
+      &.active {
+        a {
+          background-color: rgba($primary-color, 0.08);
+          color: $primary-color;
+          
+          .menu-icon {
+            color: $primary-color;
+          }
+        }
+      }
+      
+      a {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        text-decoration: none;
+        color: $primary-text;
+        transition: all 0.2s ease;
+        border-radius: 0 24px 24px 0;
+        white-space: nowrap;
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.04);
+        }
+        
+        .menu-icon {
+          margin-right: 16px;
+          color: $secondary-text;
+          font-size: 20px;
+        }
+        
+        .menu-label {
+          font-size: 14px;
+          transition: opacity 0.3s ease;
+        }
+      }
+      
+      &.collapsed {
+        a {
+          padding: 10px 0;
+          justify-content: center;
+          
+          .menu-icon {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Add smooth transition
+.menu-label {
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.collapsed .menu-label {
+  opacity: 0;
+  width: 0;
+}
+
+// Scrollbar styling for the sidebar
+.sidebar-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}

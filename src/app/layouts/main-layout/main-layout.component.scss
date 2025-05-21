@@ -1,0 +1,47 @@
+.main-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: #f8f9fa;
+  position: relative; /* Make position relative for proper child positioning */
+}
+
+.main-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0; /* Prevent flex children from overflowing */
+  transition: margin-left 0.3s ease;
+  width: calc(100% - 60px); /* Adjust width based on collapsed sidebar */
+  
+  &.sidebar-expanded {
+    width: calc(100% - 250px); /* Adjust width based on expanded sidebar */
+  }
+  
+  @media (max-width: 768px) {
+    width: 100% !important; /* Mobile view takes full width */
+  }
+}
+
+.main-content {
+  flex: 1;
+  padding: 75px 20px 20px; /* Add bottom padding for proper spacing before footer */
+  overflow-x: hidden;
+  min-height: calc(100vh - 60px - 86px); /* Subtract header height and footer height */
+  
+  @media (min-width: 992px) {
+    padding: 75px 30px 20px;
+  }
+}
+
+/* Hide sidebar on mobile but ensure proper margin adjustments */
+@media (max-width: 768px) {
+  app-sidebar {
+    display: none;
+  }
+  
+  .main-content-wrapper {
+    margin-left: 0 !important;
+  }
+}

@@ -1,0 +1,97 @@
+.footer {
+  background-color: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+  padding: 20px 0;
+  width: 100%; /* Ensure footer takes full width of parent */
+  position: relative; /* Ensure proper z-index handling */
+  
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  
+  .footer-info {
+    text-align: center;
+    margin-bottom: 15px;
+    
+    @media (min-width: 768px) {
+      text-align: left;
+      margin-bottom: 0;
+    }
+    
+    .school-info {
+      margin-bottom: 5px;
+      
+      .school-name {
+        font-weight: 600;
+        color: var(--primary-color, #3f51b5);
+      }
+      
+      .separator {
+        margin: 0 8px;
+        color: #999;
+      }
+      
+      .school-website {
+        color: #555;
+        text-decoration: none;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .copyright {
+      font-size: 13px;
+      color: #777;
+      margin: 0;
+    }
+  }
+  
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    @media (min-width: 576px) {
+      flex-direction: row;
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+      
+      @media (min-width: 576px) {
+        margin: 0 15px;
+        
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+      
+      .material-icons {
+        font-size: 18px;
+        margin-right: 5px;
+        color: var(--primary-color, #3f51b5);
+      }
+      
+      a {
+        color: #555;
+        text-decoration: none;
+        font-size: 14px;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}

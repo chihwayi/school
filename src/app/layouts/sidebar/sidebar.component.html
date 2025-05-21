@@ -1,0 +1,30 @@
+<div class="sidebar" [class.expanded]="isExpanded">
+  <div class="sidebar-header">
+    <button class="toggle-button" (click)="toggleExpanded()">
+      <span class="material-icons">
+        {{ isExpanded ? 'chevron_left' : 'chevron_right' }}
+      </span>
+    </button>
+  </div>
+  
+  <div class="sidebar-content">
+    <ng-container *ngFor="let group of menuGroups">
+      <div class="menu-group" *ngIf="hasRole(group.roles)">
+        <div class="menu-group-title" *ngIf="isExpanded">
+          {{ group.title }}
+        </div>
+        
+        <ul class="menu-items">
+          <ng-container *ngFor="let item of group.items">
+            <li *ngIf="hasRole(item.roles)" [class.collapsed]="!isExpanded" [class.active]="currentUrl === item.route">
+              <a [routerLink]="item.route" routerLinkActive="active">
+                <span class="material-icons menu-icon">{{ item.icon }}</span>
+                <span class="menu-label" *ngIf="isExpanded">{{ item.label }}</span>
+              </a>
+            </li>
+          </ng-container>
+        </ul>
+      </div>
+    </ng-container>
+  </div>
+</div>

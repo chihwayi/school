@@ -1,0 +1,95 @@
+<div class="login-container" [class.has-bg-image]="schoolConfig?.backgroundPath">
+  <div class="login-overlay"></div>
+  
+  <div class="login-card">
+    <!-- School setup required notification -->
+    <div *ngIf="setupRequired" class="setup-required">
+      <div class="setup-required-message">
+        <h2>School Setup Required</h2>
+        <p>Before you can login, you need to configure your school details.</p>
+        <button class="btn btn-primary" (click)="navigateToSetup()">Setup Now</button>
+      </div>
+    </div>
+
+    <!-- Login form -->
+    <div *ngIf="!setupRequired" class="login-form-container">
+      <!-- School logo -->
+      <div *ngIf="schoolConfig?.logoPath" class="school-logo">
+        <img [src]="getFullResourceUrl(schoolConfig?.logoPath)" [alt]="schoolConfig?.name">
+      </div>
+      
+      <!-- School name or default header -->
+      <div class="login-header">
+        <h1 *ngIf="schoolConfig?.name">{{ schoolConfig?.name }}</h1>
+        <h1 *ngIf="!schoolConfig?.name">School Attendance System</h1>
+        <p>Login to your account</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="usernameOrEmail">Username or Email</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input 
+              type="text" 
+              id="usernameOrEmail" 
+              formControlName="usernameOrEmail"
+              placeholder="Enter your username or email"
+              [class.is-invalid]="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
+          </div>
+          <div *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched" class="error-message">
+            Username or email is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input 
+              [type]="hidePassword ? 'password' : 'text'" 
+              id="password" 
+              formControlName="password"
+              placeholder="Enter your password"
+              [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <button 
+              type="button" 
+              class="password-toggle" 
+              (click)="togglePasswordVisibility()">
+              <i [class]="hidePassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+            </button>
+          </div>
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
+            Password is required
+          </div>
+        </div>
+
+        <div class="form-group remember-forgot">
+          <div class="remember-me">
+            <input type="checkbox" id="remember">
+            <label for="remember">Remember me</label>
+          </div>
+          <a href="#" class="forgot-password">Forgot password?</a>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-message system-error">
+          {{ errorMessage }}
+        </div>
+
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn btn-primary btn-block" 
+            [disabled]="loginForm.invalid || isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span *ngIf="!isLoading">Login</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="login-footer">
+        <p>Don't have an account? <a href="#">Contact administrator</a></p>
+      </div>
+    </div>
+  </div>
+</div>

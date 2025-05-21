@@ -1,0 +1,127 @@
+:root {
+  --primary-color: #3f51b5;          /* Main brand color - indigo */
+  --primary-color-rgb: 63, 81, 181;  /* RGB values for rgba calculations */
+  --primary-dark: #2c387e;           /* Darker variation */
+  --primary-light: #6573c3;          /* Lighter variation */
+  
+  --secondary-color: #f50057;        /* Secondary brand color - pink */
+  --secondary-color-rgb: 245, 0, 87; /* RGB values for rgba calculations */
+  --secondary-dark: #ab003c;         /* Darker variation */
+  --secondary-light: #f73378;        /* Lighter variation */
+  
+  --success-color: #4caf50;          /* Green for success states */
+  --warning-color: #ff9800;          /* Orange for warning states */
+  --danger-color: #f44336;           /* Red for error/danger states */
+  --info-color: #2196f3;             /* Blue for information states */
+  
+  --body-bg: #f8f9fa;                /* Light gray background */
+  --card-bg: #ffffff;                /* White for cards and content areas */
+  
+  --text-primary: #212529;           /* Main text color - dark gray */
+  --text-secondary: #6c757d;         /* Secondary text - medium gray */
+  --text-muted: #adb5bd;             /* Muted text - light gray */
+  
+  --border-color: #e0e0e0;           /* Color for borders */
+  --border-radius: 4px;              /* Default border radius */
+  
+  /* Spacing variables */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Font sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  
+  /* Layout dimensions */
+  --header-height: 60px;
+  --sidebar-width: 250px;
+  --sidebar-collapsed-width: 60px;
+  --footer-height: auto;
+  
+  /* Z-index layers */
+  --z-index-header: 1000;
+  --z-index-sidebar: 1000;
+  --z-index-modal: 1050;
+  --z-index-dropdown: 1000;
+  --z-index-tooltip: 1060;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  
+  /* Transitions */
+  --transition-speed: 0.3s;
+  --transition-function: ease;
+}
+
+/* SCSS Variables for use in component styles */
+$primary-color: #3f51b5;
+$primary-color-rgb: 63, 81, 181;
+$secondary-color: #f50057;
+$secondary-color-rgb: 245, 0, 87;
+
+$body-bg: #f8f9fa;
+$card-bg: #ffffff;
+
+$text-primary: #212529;
+$text-secondary: #6c757d;
+$text-muted: #adb5bd;
+
+$border-color: #e0e0e0;
+$border-radius: 4px;
+
+$header-height: 60px;
+$sidebar-width: 250px;
+$sidebar-collapsed-width: 60px;
+
+$breakpoint-xs: 0;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+/* Mixins */
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+@mixin transition($property: all) {
+  transition: $property 0.3s ease;
+}
+
+@mixin mobile {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-lg}) {
+    @content;
+  }
+}

@@ -1,0 +1,158 @@
+<div class="school-setup-container">
+    <div class="setup-card">
+      <div class="setup-header">
+        <h1>School Configuration</h1>
+        <p>Welcome! Let's set up your school in the system.</p>
+      </div>
+  
+      <div *ngIf="setupComplete" class="setup-success">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>Setup Complete!</h2>
+        <p>Your school has been successfully configured. Redirecting to login...</p>
+      </div>
+  
+      <form [formGroup]="setupForm" (ngSubmit)="onSubmit()" *ngIf="!setupComplete">
+        <div class="form-section">
+          <h3>School Information</h3>
+          
+          <div class="form-group">
+            <label for="name">School Name *</label>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name" 
+              placeholder="Enter school name"
+              [ngClass]="{'is-invalid': setupForm.get('name')?.invalid && setupForm.get('name')?.touched}">
+            <div class="error-message" *ngIf="setupForm.get('name')?.invalid && setupForm.get('name')?.touched">
+              School name is required
+            </div>
+          </div>
+  
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea 
+              id="description" 
+              formControlName="description" 
+              placeholder="Enter a brief description of your school"
+              rows="3"></textarea>
+          </div>
+  
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="primaryColor">Primary Color *</label>
+              <div class="color-picker-container">
+                <input type="color" id="primaryColor" formControlName="primaryColor">
+                <span class="color-value">{{setupForm.get('primaryColor')?.value}}</span>
+              </div>
+            </div>
+  
+            <div class="form-group col-md-6">
+              <label for="secondaryColor">Secondary Color *</label>
+              <div class="color-picker-container">
+                <input type="color" id="secondaryColor" formControlName="secondaryColor">
+                <span class="color-value">{{setupForm.get('secondaryColor')?.value}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="form-section">
+          <h3>Contact Information</h3>
+          
+          <div class="form-group">
+            <label for="contactEmail">Contact Email *</label>
+            <input 
+              type="email" 
+              id="contactEmail" 
+              formControlName="contactEmail" 
+              placeholder="Enter contact email"
+              [ngClass]="{'is-invalid': setupForm.get('contactEmail')?.invalid && setupForm.get('contactEmail')?.touched}">
+            <div class="error-message" *ngIf="setupForm.get('contactEmail')?.invalid && setupForm.get('contactEmail')?.touched">
+              <span *ngIf="setupForm.get('contactEmail')?.errors?.['required']">Email is required</span>
+              <span *ngIf="setupForm.get('contactEmail')?.errors?.['email']">Please enter a valid email</span>
+            </div>
+          </div>
+  
+          <div class="form-group">
+            <label for="contactPhone">Contact Phone</label>
+            <input 
+              type="tel" 
+              id="contactPhone" 
+              formControlName="contactPhone" 
+              placeholder="Enter contact phone number">
+          </div>
+  
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input 
+              type="text" 
+              id="address" 
+              formControlName="address" 
+              placeholder="Enter school address">
+          </div>
+  
+          <div class="form-group">
+            <label for="website">Website</label>
+            <input 
+              type="url" 
+              id="website" 
+              formControlName="website" 
+              placeholder="Enter school website URL">
+          </div>
+        </div>
+  
+        <div class="form-section">
+          <h3>School Branding</h3>
+          
+          <div class="form-group">
+            <label for="logo">School Logo</label>
+            <div class="file-upload">
+              <input 
+                type="file" 
+                id="logo" 
+                (change)="onLogoSelected($event)"
+                accept="image/*">
+              <label for="logo" class="file-upload-label">
+                <i class="fas fa-upload"></i> Choose Logo
+              </label>
+              <span class="file-name" *ngIf="logoFile">{{logoFile.name}}</span>
+            </div>
+            <div class="image-preview" *ngIf="logoPreview">
+              <img [src]="logoPreview" alt="Logo Preview">
+            </div>
+          </div>
+  
+          <div class="form-group">
+            <label for="background">Background Image</label>
+            <div class="file-upload">
+              <input 
+                type="file" 
+                id="background" 
+                (change)="onBackgroundSelected($event)"
+                accept="image/*">
+              <label for="background" class="file-upload-label">
+                <i class="fas fa-upload"></i> Choose Background
+              </label>
+              <span class="file-name" *ngIf="backgroundFile">{{backgroundFile.name}}</span>
+            </div>
+            <div class="image-preview bg-preview" *ngIf="backgroundPreview">
+              <img [src]="backgroundPreview" alt="Background Preview">
+            </div>
+          </div>
+        </div>
+  
+        <div class="error-message system-error" *ngIf="errorMessage">
+          {{errorMessage}}
+        </div>
+  
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Complete Setup
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

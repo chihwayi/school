@@ -1,0 +1,250 @@
+:root {
+  --primary-color: #0824c4; // Default primary color
+  --secondary-color: #93435f; // Default secondary color
+  --login-bg-image: none; // Default background (none)
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+  background-color: #f5f5f5;
+  padding: 20px;
+
+  &.has-bg-image {
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: var(--login-bg-image);
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+  }
+}
+
+.login-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 450px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.login-form-container {
+  padding: 30px;
+}
+
+.school-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  
+  img {
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: contain;
+  }
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+  
+  h1 {
+    color: var(--primary-color);
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  
+  p {
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+  
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.input-with-icon {
+  position: relative;
+  
+  i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px 12px 12px 36px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border 0.3s;
+    
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    
+    &.is-invalid {
+      border-color: #dc3545;
+    }
+  }
+  
+  .password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+  }
+}
+
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+    
+    input {
+      margin-right: 6px;
+    }
+  }
+  
+  .forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 5px;
+  
+  &.system-error {
+    padding: 10px;
+    background-color: #fff5f5;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+}
+
+.form-actions {
+  margin-top: 25px;
+}
+
+.btn {
+  display: inline-block;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 10px 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  border-radius: 6px;
+  transition: all 0.2s;
+  cursor: pointer;
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--primary-color), black 10%); 
+    opacity: 0.9;
+  }
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 14px;
+  color: #666;
+  
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.setup-required {
+  padding: 30px;
+  text-align: center;
+  
+  .setup-required-message {
+    h2 {
+      color: var(--primary-color);
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    
+    p {
+      margin-bottom: 20px;
+      color: #666;
+    }
+  }
+}
