@@ -21,6 +21,7 @@ import { ClassesComponent } from './features/classes/classes.component';
 import { SubjectsComponent } from './features/subjects/subjects.component';
 import { AssessmentsComponent } from './features/assessments/assessments.component';
 import { ReportsComponent } from './features/reports/reports.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { ReportsComponent } from './features/reports/reports.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgbModule,
   ],
   providers: [
     provideHttpClient(withFetch()),

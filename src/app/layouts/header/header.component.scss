@@ -1,15 +1,23 @@
 @import '../../../variables.scss';
 
-.header {
+ .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   background-color: #fff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 999; /* Lower than sidebar */
   height: 60px;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease, left 0.3s ease, right 0.3s ease;
+  width: calc(100% - 60px); /* Default width with collapsed sidebar */
+  margin-left: 60px; /* Default margin with collapsed sidebar */
+
+  /* Add these classes to be applied dynamically */
+  &.sidebar-expanded {
+    width: calc(100% - 250px);
+    margin-left: 250px;
+  }
 
   &.mobile-menu-open {
     height: 100vh;
@@ -210,5 +218,12 @@
         }
       }
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    width: 100% !important;
+    margin-left: 0 !important;
   }
 }

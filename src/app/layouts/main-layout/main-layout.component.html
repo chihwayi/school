@@ -4,8 +4,8 @@
     (toggleSidebar)="toggleSidebar($event)">
   </app-sidebar>
   
-  <div class="main-content-wrapper" [ngStyle]="{'margin-left': isSidebarExpanded ? '250px' : '60px'}">
-    <app-header></app-header>
+  <div class="main-content-wrapper" [class.sidebar-expanded]="isSidebarExpanded">
+    <app-header [class.sidebar-expanded]="isSidebarExpanded"></app-header>
     
     <main class="main-content">
       <router-outlet></router-outlet>

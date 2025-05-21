@@ -4,22 +4,25 @@
   min-height: 100vh;
   overflow-x: hidden;
   background-color: #f8f9fa;
-  position: relative; /* Make position relative for proper child positioning */
+  position: relative;
 }
 
 .main-content-wrapper {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-width: 0; /* Prevent flex children from overflowing */
+  min-width: 0;
   transition: margin-left 0.3s ease;
-  width: calc(100% - 60px); /* Adjust width based on collapsed sidebar */
+  margin-left: 60px; /* Default margin for collapsed sidebar */
+  width: calc(100% - 60px); /* Width calculation for collapsed sidebar */
   
   &.sidebar-expanded {
-    width: calc(100% - 250px); /* Adjust width based on expanded sidebar */
+    margin-left: 250px; /* Margin for expanded sidebar */
+    width: calc(100% - 250px); /* Width calculation for expanded sidebar */
   }
   
   @media (max-width: 768px) {
+    margin-left: 0 !important;
     width: 100% !important; /* Mobile view takes full width */
   }
 }
@@ -39,9 +42,5 @@
 @media (max-width: 768px) {
   app-sidebar {
     display: none;
-  }
-  
-  .main-content-wrapper {
-    margin-left: 0 !important;
   }
 }

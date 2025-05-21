@@ -7,10 +7,8 @@
           <i class="material-icons">{{ isMenuOpen ? 'close' : 'menu' }}</i>
         </button>
         <a routerLink="/dashboard" class="logo">
-          <img *ngIf="schoolInfo?.logoPath" 
-               [src]="getFullResourceUrl(schoolInfo?.logoPath)" 
-               alt="School Logo"
-               class="school-logo">
+          <img *ngIf="schoolInfo?.logoPath" [src]="getFullResourceUrl(schoolInfo?.logoPath)" alt="School Logo"
+            class="school-logo">
           <span *ngIf="!schoolInfo?.logoPath" class="school-name">School Management</span>
           <span *ngIf="schoolInfo?.name" class="school-name d-none d-sm-inline">{{ schoolInfo?.name }}</span>
         </a>
@@ -20,7 +18,7 @@
       <nav class="main-nav d-none d-md-flex" *ngIf="isLoggedIn">
         <ul class="nav-links">
           <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
-          
+
           <!-- Admin and Clerk Links -->
           <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')" class="dropdown">
             <a class="dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">
@@ -34,10 +32,10 @@
               <li *ngIf="hasRole('ADMIN')"><a class="dropdown-item" routerLink="/users">Users</a></li>
             </ul>
           </li>
-          
+
           <!-- Teacher Specific Links -->
           <li *ngIf="hasRole('TEACHER')"><a routerLink="/my-classes">My Classes</a></li>
-          
+
           <!-- Common Links for All Authenticated Users -->
           <li><a routerLink="/assessments">Assessments</a></li>
           <li><a routerLink="/reports">Reports</a></li>
@@ -46,47 +44,49 @@
       </nav>
 
       <!-- User Menu -->
-      <div class="user-menu" *ngIf="isLoggedIn">
-        <div class="dropdown">
-          <button class="btn dropdown-toggle user-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="material-icons">account_circle</span>
-            <span class="username d-none d-sm-inline">{{ username }}</span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><span class="dropdown-item-text">Signed in as <strong>{{ username }}</strong></span></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
-            <li *ngIf="hasRole('ADMIN')"><a class="dropdown-item" routerLink="/settings">Settings</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
-          </ul>
+      <div ngbDropdown class="user-menu" *ngIf="isLoggedIn">
+        <button class="btn dropdown-toggle user-button" ngbDropdownToggle>
+          <span class="material-icons">account_circle</span>
+          <span class="username d-none d-sm-inline">{{ username }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button class="dropdown-item-text disabled">Signed in as <strong>{{ username }}</strong></button>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" routerLink="/profile">Profile</a>
+          <a *ngIf="hasRole('ADMIN')" class="dropdown-item" routerLink="/settings">Settings</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" (click)="logout()">Logout</a>
         </div>
       </div>
+
     </div>
   </div>
-  
+
   <!-- Mobile Navigation Menu -->
   <div class="mobile-nav" *ngIf="isLoggedIn && isMenuOpen">
     <ul class="nav-links">
       <li><a routerLink="/dashboard" routerLinkActive="active" (click)="toggleMenu()">Dashboard</a></li>
-      
+
       <!-- Admin and Clerk Section -->
       <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')" class="section-header">Management</li>
-      <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')"><a routerLink="/students" (click)="toggleMenu()">Students</a></li>
-      <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')"><a routerLink="/teachers" (click)="toggleMenu()">Teachers</a></li>
+      <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')"><a routerLink="/students" (click)="toggleMenu()">Students</a>
+      </li>
+      <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')"><a routerLink="/teachers" (click)="toggleMenu()">Teachers</a>
+      </li>
       <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')"><a routerLink="/classes" (click)="toggleMenu()">Classes</a></li>
-      <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')"><a routerLink="/subjects" (click)="toggleMenu()">Subjects</a></li>
+      <li *ngIf="hasRole('ADMIN') || hasRole('CLERK')"><a routerLink="/subjects" (click)="toggleMenu()">Subjects</a>
+      </li>
       <li *ngIf="hasRole('ADMIN')"><a routerLink="/users" (click)="toggleMenu()">Users</a></li>
-      
+
       <!-- Teacher Section -->
       <li *ngIf="hasRole('TEACHER')"><a routerLink="/my-classes" (click)="toggleMenu()">My Classes</a></li>
-      
+
       <!-- Common Links -->
       <li class="section-header">Academic</li>
       <li><a routerLink="/assessments" (click)="toggleMenu()">Assessments</a></li>
       <li><a routerLink="/reports" (click)="toggleMenu()">Reports</a></li>
       <li><a routerLink="/attendance" (click)="toggleMenu()">Attendance</a></li>
-      
+
       <!-- User Options -->
       <li class="section-header">Account</li>
       <li><a routerLink="/profile" (click)="toggleMenu()">Profile</a></li>

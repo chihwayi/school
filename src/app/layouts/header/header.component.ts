@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SchoolService } from '../../core/services/school.service';
 import { Subscription } from 'rxjs';
 import { SchoolConfig } from '../../models/school-config.model';
 import { environment } from '../../../environments/environment';
+import { initBootstrapDropdowns } from '../../shared/utils/bootstrap-utils';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +13,9 @@ import { environment } from '../../../environments/environment';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
+  @Input() sidebarExpanded: boolean = false; // New input property to track sidebar state
+  
   isLoggedIn = false;
   username: string = '';
   userRoles: string[] = [];
@@ -45,6 +48,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.schoolInfo = info;
       })
     );
+  }
+
+  ngAfterViewInit(): void {
+    initBootstrapDropdowns();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Handle sidebar expanded state changes
+    if (changes['sidebarExpanded']) {
+      // You can add any additional logic here if needed when sidebar state changes
+    }
   }
 
   ngOnDestroy(): void {
