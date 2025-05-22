@@ -6,6 +6,11 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { RoleGuard } from './core/guards/role.guard.guard';
+import { StudentListComponent } from './features/students/student-list/student-list.component';
+import { SubjectListComponent } from './features/subjects/subject-list/subject-list.component';
+import { SubjectFormComponent } from './features/subjects/subject-form/subject-form.component';
+import { StudentDetailComponent } from './features/students/student-detail/student-detail.component';
+import { StudentFormComponent } from './features/students/student-form/student-form.component';
 
 const routes: Routes = [
   // Public routes
@@ -38,23 +43,23 @@ const routes: Routes = [
         children: [
           { 
             path: '', 
-            // component: StudentListComponent // Add this when created
+            component: StudentListComponent 
           },
           { 
             path: 'new', 
             canActivate: [RoleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
-            // component: StudentFormComponent // Add this when created
+            component: StudentFormComponent
           },
           { 
             path: ':id', 
-            // component: StudentDetailComponent // Add this when created
+            component: StudentDetailComponent 
           },
           { 
             path: ':id/edit',
             canActivate: [RoleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
-            // component: StudentFormComponent // Add this when created
+            component: StudentFormComponent 
           }
         ]
       },
@@ -125,13 +130,13 @@ const routes: Routes = [
         children: [
           { 
             path: '', 
-            // component: SubjectListComponent // Add this when created 
+            component: SubjectListComponent
           },
           { 
             path: 'new', 
             canActivate: [RoleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
-            // component: SubjectFormComponent // Add this when created
+            component: SubjectFormComponent 
           },
           { 
             path: ':id', 
@@ -141,7 +146,7 @@ const routes: Routes = [
             path: ':id/edit',
             canActivate: [RoleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
-            // component: SubjectFormComponent // Add this when created
+            component: SubjectFormComponent
           }
         ]
       },

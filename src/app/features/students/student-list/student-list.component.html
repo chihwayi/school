@@ -1,0 +1,295 @@
+<div class="student-list-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-title">
+      <h1 class="page-title">
+        <i class="fas fa-users"></i>
+        Students
+      </h1>
+      <p class="page-subtitle">Manage student records and information</p>
+    </div>
+    <div class="header-actions" *ngIf="canManageStudents()">
+      <button class="btn btn-primary" (click)="addNewStudent()">
+        <i class="fas fa-plus"></i>
+        Add Student
+      </button>
+    </div>
+  </div>
+
+  <!-- Alert Messages -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fas fa-check-circle"></i>
+    <span>{{ successMessage }}</span>
+    <button class="alert-close" (click)="successMessage = null">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ error }}</span>
+    <button class="alert-close" (click)="error = null">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-card">
+    <div class="filters-header">
+      <h3>Filters</h3>
+      <button *ngIf="searchTerm || selectedLevel || selectedForm || selectedSection" 
+              class="btn btn-text" (click)="clearFilters()">
+        <i class="fas fa-times"></i>
+        Clear All
+      </button>
+    </div>
+    
+    <div class="filters-grid">
+      <!-- Search Input -->
+      <div class="filter-group">
+        <label class="filter-label">Search</label>
+        <div class="search-input-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            placeholder="Search by name or student ID..."
+            class="form-input search-input"
+          />
+        </div>
+      </div>
+
+      <!-- Level Filter -->
+      <div class="filter-group">
+        <label class="filter-label">Level</label>
+        <select
+          [(ngModel)]="selectedLevel"
+          (change)="onFilterChange()"
+          class="form-select"
+        >
+          <option value="">All Levels</option>
+          <option *ngFor="let level of levels" [value]="level">
+            {{ getLevelDisplayName(level) }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Form Filter -->
+      <div class="filter-group">
+        <label class="filter-label">Form</label>
+        <select
+          [(ngModel)]="selectedForm"
+          (change)="onFilterChange()"
+          class="form-select"
+        >
+          <option value="">All Forms</option>
+          <option *ngFor="let form of forms" [value]="form">
+            {{ form }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Section Filter -->
+      <div class="filter-group">
+        <label class="filter-label">Section</label>
+        <select
+          [(ngModel)]="selectedSection"
+          (change)="onFilterChange()"
+          class="form-select"
+        >
+          <option value="">All Sections</option>
+          <option *ngFor="let section of sections" [value]="section">
+            {{ section }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Filter Summary -->
+    <div *ngIf="getFilterSummary()" class="filter-summary">
+      <i class="fas fa-filter"></i>
+      {{ getFilterSummary() }}
+    </div>
+  </div>
+
+  <!-- Bulk Actions Bar -->
+  <div *ngIf="showBulkActions" class="bulk-actions-bar">
+    <div class="bulk-actions-info">
+      <span>{{ selectedStudents.size }} student(s) selected</span>
+    </div>
+    <div class="bulk-actions-buttons" *ngIf="canManageStudents()">
+      <button class="btn btn-secondary btn-sm" (click)="bulkAdvanceForm()">
+        <i class="fas fa-arrow-up"></i>
+        Advance Form
+      </button>
+      <button class="btn btn-secondary btn-sm" (click)="bulkPromoteToALevel()">
+        <i class="fas fa-graduation-cap"></i>
+        Promote to A-Level
+      </button>
+      <button class="btn btn-text btn-sm" (click)="clearSelection()">
+        <i class="fas fa-times"></i>
+        Clear Selection
+      </button>
+    </div>
+  </div>
+
+  <!-- Students Table -->
+  <div class="table-card">
+    <!-- Table Header with Stats -->
+    <div class="table-header">
+      <div class="table-stats">
+        <span class="stats-item">
+          Total: <strong>{{ totalItems }}</strong>
+        </span>
+        <span class="stats-item">
+          Showing: <strong>{{ getPaginatedStudents().length }}</strong>
+        </span>
+      </div>
+      <div class="table-actions">
+        <button class="btn btn-text btn-sm" (click)="exportStudents()">
+          <i class="fas fa-download"></i>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading students...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && filteredStudents.length === 0" class="empty-state">
+      <i class="fas fa-users"></i>
+      <h3>No students found</h3>
+      <p *ngIf="searchTerm || selectedLevel || selectedForm || selectedSection">
+        Try adjusting your filters or search terms.
+      </p>
+      <p *ngIf="!searchTerm && !selectedLevel && !selectedForm && !selectedSection">
+        Start by adding your first student to the system.
+      </p>
+      <button *ngIf="canManageStudents() && !searchTerm && !selectedLevel && !selectedForm && !selectedSection" 
+              class="btn btn-primary" 
+              (click)="addNewStudent()">
+        <i class="fas fa-plus"></i>
+        Add First Student
+      </button>
+    </div>
+
+    <!-- Students Table -->
+    <div *ngIf="!loading && filteredStudents.length > 0" class="table-wrapper">
+      <table class="students-table">
+        <thead>
+          <tr>
+            <th class="checkbox-column" *ngIf="canManageStudents()">
+              <input
+                type="checkbox"
+                [checked]="isAllSelected()"
+                [indeterminate]="isIndeterminate()"
+                (change)="toggleAllSelection()"
+                class="table-checkbox"
+              />
+            </th>
+            <th>Student</th>
+            <th>Student ID</th>
+            <th>Class</th>
+            <th>Level</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let student of getPaginatedStudents()" class="student-row">
+            <td class="checkbox-column" *ngIf="canManageStudents()">
+              <input
+                type="checkbox"
+                [checked]="selectedStudents.has(student.id)"
+                (change)="toggleStudentSelection(student.id)"
+                class="table-checkbox"
+              />
+            </td>
+            <td class="student-info">
+              <div class="student-avatar">
+                {{ student.firstName.charAt(0) }}{{ student.lastName.charAt(0) }}
+              </div>
+              <div class="student-details">
+                <div class="student-name">{{ getStudentFullName(student) }}</div>
+              </div>
+            </td>
+            <td class="student-id">{{ student.studentId }}</td>
+            <td class="class-info">
+              <span class="class-badge">{{ getClassDisplayName(student) }}</span>
+            </td>
+            <td class="level-info">
+              <span class="level-badge" [class]="'level-' + student.level.toLowerCase()">
+                {{ getLevelDisplayName(student.level) }}
+              </span>
+            </td>
+            <td class="actions-column">
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-icon" 
+                  (click)="viewStudent(student.id)"
+                  title="View Details"
+                >
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button 
+                  *ngIf="canManageStudents()"
+                  class="btn btn-icon" 
+                  (click)="editStudent(student.id)"
+                  title="Edit Student"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button 
+                  *ngIf="canManageStudents()"
+                  class="btn btn-icon btn-danger" 
+                  (click)="deleteStudent(student)"
+                  title="Delete Student"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!loading && getTotalPages() > 1" class="pagination-container">
+      <div class="pagination-info">
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - 
+        {{ Math.min(currentPage * itemsPerPage, totalItems) }} of {{ totalItems }} students
+      </div>
+      <div class="pagination">
+        <button 
+          class="btn btn-pagination" 
+          [disabled]="currentPage === 1"
+          (click)="goToPage(currentPage - 1)"
+        >
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <button 
+          *ngFor="let page of getPageNumbers()"
+          class="btn btn-pagination"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+        
+        <button 
+          class="btn btn-pagination" 
+          [disabled]="currentPage === getTotalPages()"
+          (click)="goToPage(currentPage + 1)"
+        >
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

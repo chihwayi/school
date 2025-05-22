@@ -1,0 +1,178 @@
+<div class="teacher-list-container">
+  <div class="page-header">
+    <h1><i class="fas fa-chalkboard-teacher"></i> Teachers</h1>
+    <button 
+      *ngIf="canCreate" 
+      class="btn btn-primary" 
+      (click)="createTeacher()">
+      <i class="fas fa-plus"></i> Add New Teacher
+    </button>
+  </div>
+
+  <!-- Search and Actions -->
+  <div class="actions-bar">
+    <div class="search-container">
+      <div class="input-group">
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Search teachers..." 
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          (keyup.enter)="onSearch()">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
+            <i class="fas fa-search"></i>
+          </button>
+          <button 
+            *ngIf="searchTerm" 
+            class="btn btn-outline-secondary" 
+            type="button" 
+            (click)="clearSearch()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="action-buttons">
+      <button class="btn btn-outline-primary" (click)="refreshList()">
+        <i class="fas fa-sync-alt"></i> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <p>Loading teachers...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ error }}
+    <button class="btn btn-sm btn-outline-danger ms-2" (click)="refreshList()">
+      Try Again
+    </button>
+  </div>
+
+  <!-- Teachers Table -->
+  <div *ngIf="!loading && !error" class="table-container">
+    <div class="table-header">
+      <h3>All Teachers ({{ totalItems }})</h3>
+      <div *ngIf="searchTerm" class="search-info">
+        Showing results for: <strong>"{{ searchTerm }}"</strong>
+      </div>
+    </div>
+
+    <div *ngIf="filteredTeachers.length === 0" class="no-data">
+      <i class="fas fa-user-tie"></i>
+      <h3>No Teachers Found</h3>
+      <p *ngIf="!searchTerm">No teachers have been registered yet.</p>
+      <p *ngIf="searchTerm">No teachers match your search criteria.</p>
+      <button 
+        *ngIf="canCreate && !searchTerm" 
+        class="btn btn-primary" 
+        (click)="createTeacher()">
+        <i class="fas fa-plus"></i> Add First Teacher
+      </button>
+    </div>
+
+    <div *ngIf="filteredTeachers.length > 0" class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let teacher of getPaginatedTeachers(); trackBy: trackByTeacherId">
+            <td>
+              <strong>{{ teacher.employeeId }}</strong>
+            </td>
+            <td>
+              <div class="teacher-name">
+                <strong>{{ getFullName(teacher) }}</strong>
+              </div>
+            </td>
+            <td>
+              <span *ngIf="teacher.user" class="username">{{ teacher.user.username }}</span>
+              <span *ngIf="!teacher.user" class="text-muted">No account</span>
+            </td>
+            <td>
+              <span *ngIf="teacher.user" class="email">{{ teacher.user.email }}</span>
+              <span *ngIf="!teacher.user" class="text-muted">-</span>
+            </td>
+            <td>
+              <span 
+                class="badge" 
+                [class]="teacher.user ? 'badge-success' : 'badge-warning'">
+                {{ teacher.user ? 'Active' : 'No Account' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-sm btn-outline-primary" 
+                  (click)="viewTeacher(teacher)"
+                  title="View Details">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button 
+                  *ngIf="canEdit"
+                  class="btn btn-sm btn-outline-secondary" 
+                  (click)="editTeacher(teacher)"
+                  title="Edit Teacher">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button 
+                  *ngIf="canDelete"
+                  class="btn btn-sm btn-outline-danger" 
+                  (click)="deleteTeacher(teacher)"
+                  title="Delete Teacher">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1" class="pagination-container">
+      <div class="pagination-info">
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+        {{ Math.min(currentPage * itemsPerPage, totalItems) }} of 
+        {{ totalItems }} teachers
+      </div>
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="goToPage(currentPage - 1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+        </li>
+        <li 
+          *ngFor="let page of [].constructor(totalPages); let i = index" 
+          class="page-item" 
+          [class.active]="currentPage === i + 1">
+          <button class="page-link" (click)="goToPage(i + 1)">
+            {{ i + 1 }}
+          </button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="goToPage(currentPage + 1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

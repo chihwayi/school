@@ -60,6 +60,16 @@
   /* Transitions */
   --transition-speed: 0.3s;
   --transition-function: ease;
+
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --bg-white: #ffffff;
+  --bg-gray-100: #f3f4f6;
+  --bg-gray-200: #e5e7eb;
+  --border-light: #e5e7eb;
+  --border-medium: #d1d5db;
 }
 
 /* SCSS Variables for use in component styles */

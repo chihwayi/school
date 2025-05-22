@@ -35,4 +35,8 @@ export class SubjectService {
   deleteSubject(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getSubjectById(id: number): Observable<Subject> {
+    return this.http.get<Subject>(`${this.apiUrl}/${id}`);
+  }
 }

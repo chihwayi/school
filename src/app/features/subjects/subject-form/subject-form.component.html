@@ -1,0 +1,149 @@
+<div class="subject-form-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-book"></i>
+      {{ isEditMode ? 'Edit Subject' : 'Add New Subject' }}
+    </h1>
+    <nav class="breadcrumb">
+      <a routerLink="/subjects" class="breadcrumb-link">Subjects</a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">{{ isEditMode ? 'Edit' : 'New' }}</span>
+    </nav>
+  </div>
+
+  <div class="form-card">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading subject details...</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="error" class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Form -->
+    <form *ngIf="!loading" [formGroup]="subjectForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-grid">
+        <!-- Subject Name -->
+        <div class="form-group">
+          <label for="name" class="form-label required">Subject Name</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            class="form-input"
+            [class.error]="isFieldInvalid('name')"
+            placeholder="Enter subject name"
+            maxlength="100"
+          />
+          <div *ngIf="isFieldInvalid('name')" class="error-message">
+            {{ getFieldErrorMessage('name') }}
+          </div>
+        </div>
+
+        <!-- Subject Code -->
+        <div class="form-group">
+          <label for="code" class="form-label required">Subject Code</label>
+          <input
+            type="text"
+            id="code"
+            formControlName="code"
+            class="form-input"
+            [class.error]="isFieldInvalid('code')"
+            placeholder="e.g., MATH-01, ENG-LIT"
+            maxlength="20"
+            style="text-transform: uppercase;"
+          />
+          <div *ngIf="isFieldInvalid('code')" class="error-message">
+            {{ getFieldErrorMessage('code') }}
+          </div>
+          <small class="form-help">Use uppercase letters, numbers, and hyphens only</small>
+        </div>
+
+        <!-- Level -->
+        <div class="form-group">
+          <label for="level" class="form-label required">Level</label>
+          <select
+            id="level"
+            formControlName="level"
+            class="form-select"
+            [class.error]="isFieldInvalid('level')"
+          >
+            <option value="">Select level</option>
+            <option *ngFor="let level of levels" [value]="level">
+              {{ level }}
+            </option>
+          </select>
+          <div *ngIf="isFieldInvalid('level')" class="error-message">
+            {{ getFieldErrorMessage('level') }}
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label for="category" class="form-label required">Category</label>
+          <select
+            id="category"
+            formControlName="category"
+            class="form-select"
+            [class.error]="isFieldInvalid('category')"
+          >
+            <option value="">Select category</option>
+            <option *ngFor="let category of categories" [value]="category">
+              {{ getCategoryDisplayName(category) }}
+            </option>
+          </select>
+          <div *ngIf="isFieldInvalid('category')" class="error-message">
+            {{ getFieldErrorMessage('category') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group full-width">
+        <label for="description" class="form-label">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-textarea"
+          [class.error]="isFieldInvalid('description')"
+          placeholder="Optional description of the subject"
+          rows="4"
+          maxlength="500"
+        ></textarea>
+        <div *ngIf="isFieldInvalid('description')" class="error-message">
+          {{ getFieldErrorMessage('description') }}
+        </div>
+        <small class="form-help">
+          {{ subjectForm.get('description')?.value?.length || 0 }}/500 characters
+        </small>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="saving"
+        >
+          <i class="fas fa-times"></i>
+          Cancel
+        </button>
+        
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="subjectForm.invalid || saving"
+        >
+          <i *ngIf="saving" class="fas fa-spinner fa-spin"></i>
+          <i *ngIf="!saving" class="fas" [class.fa-plus]="!isEditMode" [class.fa-save]="isEditMode"></i>
+          {{ saving ? 'Saving...' : (isEditMode ? 'Update Subject' : 'Create Subject') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

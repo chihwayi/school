@@ -1,18 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { Student } from '../../models/student.model';
+import { Teacher } from '../../models/teacher.model';
+import { ClassGroup } from '../../models/class.model';
+import { Subject } from '../../models/subject.model';
+import { TeacherSubjectClass } from '../../models/teacher.model';
+import { Assessment } from '../../models/assessment.model';
+import { forkJoin, catchError, of } from 'rxjs';
+import { AssessmentService } from '../../core/services/assessment.service';
+import { ClassService } from '../../core/services/class.service';
+import { StudentService } from '../../core/services/student.service';
+import { SubjectService } from '../../core/services/subject.service';
+import { TeacherService } from '../../core/services/teacher.service';
 
-interface DashboardStat {
-  icon: string;
-  label: string;
-  value: number | string;
-  color: string;
-  route: string;
-}
-
-interface UserInfo {
-  name: string;
-  roles: string[];
+interface DashboardStats {
+  totalStudents: number;
+  totalTeachers: number;
+  totalClasses: number;
+  totalSubjects: number;
+  oLevelStudents: number;
+  aLevelStudents: number;
+  recentAssessments: Assessment[];
+  assignedClasses?: TeacherSubjectClass[];
+  supervisedClasses?: ClassGroup[];
 }
 
 @Component({
@@ -22,202 +32,133 @@ interface UserInfo {
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
-  userInfo: UserInfo = { name: '', roles: [] };
-  dashboardStats: DashboardStat[] = [];
-  recentActivities: any[] = [];
-  upcomingEvents: any[] = [];
-  isLoading = true;
-  userRoles: string[] = [];
+  loading = true;
+  error: string | null = null;
+  currentUser: any;
+  schoolInfo: any;
+  stats: DashboardStats = {
+    totalStudents: 0,
+    totalTeachers: 0,
+    totalClasses: 0,
+    totalSubjects: 0,
+    oLevelStudents: 0,
+    aLevelStudents: 0,
+    recentAssessments: []
+  };
+currentDate!: string|number|Date;
 
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) { }
+    private studentService: StudentService,
+    private teacherService: TeacherService,
+    private classService: ClassService,
+    private subjectService: SubjectService,
+    private assessmentService: AssessmentService
+  ) {}
 
   ngOnInit(): void {
-    this.loadUserInfo();
-    
-    // Wait a moment to simulate loading data
-    setTimeout(() => {
-      this.loadDashboardData();
-      this.isLoading = false;
-    }, 500);
-  }
-
-  loadUserInfo(): void {
-    this.authService.currentUser$.subscribe(user => {
-      if (user) {
-        this.userRoles = user.roles || [];
-        this.userInfo.name = user.username;
-        this.userInfo.roles = user.roles;
-      }
-    });
+    this.currentUser = this.authService.getCurrentUser();
+    this.schoolInfo = this.authService.getSchoolInfo();
+    this.loadDashboardData();
+    this.currentDate = new Date(); 
   }
 
   loadDashboardData(): void {
-    // Show different stats based on user role
-    if (this.userRoles.includes('ROLE_ADMIN') || this.userRoles.includes('ROLE_CLERK')) {
-      this.loadAdminDashboard();
-    } else if (this.userRoles.includes('ROLE_TEACHER')) {
+    this.loading = true;
+    this.error = null;
+
+    if (this.hasRole('ADMIN') || this.hasRole('CLERK')) {
+      this.loadAdminClerkDashboard();
+    } else if (this.hasRole('TEACHER') || this.hasRole('CLASS_TEACHER')) {
       this.loadTeacherDashboard();
-    }
-
-    // Load activities and events (common for all roles)
-    this.loadActivitiesAndEvents();
-  }
-
-  loadAdminDashboard(): void {
-    // Example stats for admin/clerk
-    this.dashboardStats = [
-      {
-        icon: 'school',
-        label: 'Total Students',
-        value: 582,
-        color: '#3f51b5',
-        route: '/students'
-      },
-      {
-        icon: 'person',
-        label: 'Teachers',
-        value: 47,
-        color: '#f50057',
-        route: '/teachers'
-      },
-      {
-        icon: 'groups',
-        label: 'Classes',
-        value: 24,
-        color: '#ff9800',
-        route: '/classes'
-      },
-      {
-        icon: 'book',
-        label: 'Subjects',
-        value: 35,
-        color: '#4caf50',
-        route: '/subjects'
-      }
-    ];
-  }
-
-  loadTeacherDashboard(): void {
-    // Example stats for teachers
-    this.dashboardStats = [
-      {
-        icon: 'class',
-        label: 'My Classes',
-        value: 4,
-        color: '#3f51b5',
-        route: '/my-classes'
-      },
-      {
-        icon: 'group',
-        label: 'My Students',
-        value: 120,
-        color: '#f50057',
-        route: '/my-classes'
-      },
-      {
-        icon: 'assignment',
-        label: 'Pending Assessments',
-        value: 12,
-        color: '#ff9800',
-        route: '/assessments'
-      },
-      {
-        icon: 'event',
-        label: 'Upcoming Events',
-        value: 3,
-        color: '#4caf50',
-        route: '/events'
-      }
-    ];
-  }
-
-  loadActivitiesAndEvents(): void {
-    // Fake recent activities for demo purposes
-    this.recentActivities = [
-      {
-        id: 1,
-        type: 'assessment',
-        description: 'Mathematics Assessment scores uploaded',
-        timestamp: new Date(new Date().getTime() - 30 * 60000), // 30 minutes ago
-        user: 'John Smith'
-      },
-      {
-        id: 2,
-        type: 'attendance',
-        description: 'Attendance marked for Form 3A',
-        timestamp: new Date(new Date().getTime() - 2 * 3600000), // 2 hours ago
-        user: 'Sarah Johnson'
-      },
-      {
-        id: 3,
-        type: 'report',
-        description: 'End of term reports generated for Form 4',
-        timestamp: new Date(new Date().getTime() - 1 * 86400000), // 1 day ago
-        user: 'Admin'
-      },
-      {
-        id: 4,
-        type: 'student',
-        description: 'New student registered: Alice Walker',
-        timestamp: new Date(new Date().getTime() - 2 * 86400000), // 2 days ago
-        user: 'Jane Doe'
-      }
-    ];
-
-    // Fake upcoming events
-    this.upcomingEvents = [
-      {
-        id: 1,
-        title: 'End of Term Exams',
-        date: new Date(new Date().getTime() + 7 * 86400000), // 7 days from now
-        location: 'All Classes'
-      },
-      {
-        id: 2,
-        title: 'Parent-Teacher Meeting',
-        date: new Date(new Date().getTime() + 14 * 86400000), // 14 days from now
-        location: 'School Hall'
-      },
-      {
-        id: 3,
-        title: 'Staff Development Day',
-        date: new Date(new Date().getTime() + 21 * 86400000), // 21 days from now
-        location: 'Conference Room'
-      }
-    ];
-  }
-
-  navigateTo(route: string): void {
-    this.router.navigate([route]);
-  }
-
-  getRelativeTime(date: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffSec = Math.round(diffMs / 1000);
-    const diffMin = Math.round(diffSec / 60);
-    const diffHour = Math.round(diffMin / 60);
-    const diffDay = Math.round(diffHour / 24);
-
-    if (diffSec < 60) {
-      return `${diffSec} seconds ago`;
-    } else if (diffMin < 60) {
-      return `${diffMin} minutes ago`;
-    } else if (diffHour < 24) {
-      return `${diffHour} hours ago`;
     } else {
-      return `${diffDay} days ago`;
+      this.loading = false;
+      this.error = 'Unauthorized access';
     }
   }
 
-  formatDate(date: Date): string {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
+  private loadAdminClerkDashboard(): void {
+    forkJoin({
+      students: this.studentService.getAllStudents().pipe(catchError(err => of([]))),
+      teachers: this.teacherService.getAllTeachers().pipe(catchError(err => of([]))),
+      classes: this.classService.getAllClassGroups().pipe(catchError(err => of([]))),
+      subjects: this.subjectService.getAllSubjects().pipe(catchError(err => of([])))
+    }).subscribe({
+      next: (data) => {
+        this.stats.totalStudents = data.students.length;
+        this.stats.totalTeachers = data.teachers.length;
+        this.stats.totalClasses = data.classes.length;
+        this.stats.totalSubjects = data.subjects.length;
+        
+        // Calculate O-Level and A-Level students
+        this.stats.oLevelStudents = data.students.filter(s => s.level === 'O-LEVEL').length;
+        this.stats.aLevelStudents = data.students.filter(s => s.level === 'A-LEVEL').length;
+        
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = 'Failed to load dashboard data';
+        this.loading = false;
+        console.error('Dashboard error:', error);
+      }
     });
+  }
+
+  private loadTeacherDashboard(): void {
+    forkJoin({
+      assignedClasses: this.teacherService.getAssignedSubjectsAndClasses().pipe(catchError(err => of([]))),
+      supervisedClasses: this.teacherService.getSupervisedClasses().pipe(catchError(err => of([])))
+    }).subscribe({
+      next: (data) => {
+        this.stats.assignedClasses = data.assignedClasses;
+        this.stats.supervisedClasses = data.supervisedClasses;
+        this.stats.totalClasses = data.assignedClasses.length;
+        
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = 'Failed to load teacher dashboard data';
+        this.loading = false;
+        console.error('Teacher dashboard error:', error);
+      }
+    });
+  }
+
+  hasRole(role: string): boolean {
+    return this.authService.hasRole(`ROLE_${role}`);
+  }
+
+  isAdmin(): boolean {
+    return this.hasRole('ADMIN');
+  }
+
+  isClerk(): boolean {
+    return this.hasRole('CLERK');
+  }
+
+  isTeacher(): boolean {
+    return this.hasRole('TEACHER') || this.hasRole('CLASS_TEACHER');
+  }
+
+  getWelcomeMessage(): string {
+    const user = this.currentUser;
+    if (!user) return 'Welcome to the School Management System';
+    
+    const roles = user.roles || [];
+    if (roles.includes('ROLE_ADMIN')) {
+      return `Welcome back, Administrator ${user.username}`;
+    } else if (roles.includes('ROLE_CLERK')) {
+      return `Welcome back, ${user.username}`;
+    } else if (roles.includes('ROLE_CLASS_TEACHER')) {
+      return `Welcome back, Class Teacher ${user.username}`;
+    } else if (roles.includes('ROLE_TEACHER')) {
+      return `Welcome back, Teacher ${user.username}`;
+    }
+    
+    return `Welcome back, ${user.username}`;
+  }
+
+  retry(): void {
+    this.loadDashboardData();
   }
 }

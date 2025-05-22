@@ -1,0 +1,206 @@
+<div class="student-form-container">
+  <div class="page-header">
+    <h2>{{ isEditMode ? 'Edit Student' : 'Add New Student' }}</h2>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a routerLink="/students">Students</a></li>
+        <li class="breadcrumb-item active">{{ isEditMode ? 'Edit' : 'Add' }}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" class="student-form">
+      <!-- Loading Overlay -->
+      <div *ngIf="isLoading" class="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Personal Information Section -->
+      <div class="form-section">
+        <h4 class="section-title">Personal Information</h4>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="firstName" class="form-label">First Name *</label>
+              <input
+                type="text"
+                id="firstName"
+                formControlName="firstName"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('firstName')"
+                placeholder="Enter first name">
+              <div *ngIf="isFieldInvalid('firstName')" class="invalid-feedback">
+                {{ getFieldError('firstName') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="lastName" class="form-label">Last Name *</label>
+              <input
+                type="text"
+                id="lastName"
+                formControlName="lastName"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('lastName')"
+                placeholder="Enter last name">
+              <div *ngIf="isFieldInvalid('lastName')" class="invalid-feedback">
+                {{ getFieldError('lastName') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="studentId" class="form-label">Student ID *</label>
+              <input
+                type="text"
+                id="studentId"
+                formControlName="studentId"
+                class="form-control"
+                [class.is-invalid]="isFieldInvalid('studentId')"
+                [readonly]="isEditMode"
+                placeholder="Enter student ID">
+              <div *ngIf="isFieldInvalid('studentId')" class="invalid-feedback">
+                {{ getFieldError('studentId') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Information Section -->
+      <div class="form-section">
+        <h4 class="section-title">Academic Information</h4>
+        
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="level" class="form-label">Level *</label>
+              <select
+                id="level"
+                formControlName="level"
+                class="form-select"
+                [class.is-invalid]="isFieldInvalid('level')">
+                <option value="">Select Level</option>
+                <option *ngFor="let level of studentLevels" [value]="level">
+                  {{ level }}
+                </option>
+              </select>
+              <div *ngIf="isFieldInvalid('level')" class="invalid-feedback">
+                {{ getFieldError('level') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="form" class="form-label">Form *</label>
+              <select
+                id="form"
+                formControlName="form"
+                class="form-select"
+                [class.is-invalid]="isFieldInvalid('form')"
+                [disabled]="!studentForm.get('level')?.value">
+                <option value="">Select Form</option>
+                <option *ngFor="let form of availableForms" [value]="form">
+                  {{ form }}
+                </option>
+              </select>
+              <div *ngIf="isFieldInvalid('form')" class="invalid-feedback">
+                {{ getFieldError('form') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="section" class="form-label">Section *</label>
+              <select
+                id="section"
+                formControlName="section"
+                class="form-select"
+                [class.is-invalid]="isFieldInvalid('section')">
+                <option value="">Select Section</option>
+                <option *ngFor="let section of sections" [value]="section">
+                  {{ section }}
+                </option>
+              </select>
+              <div *ngIf="isFieldInvalid('section')" class="invalid-feedback">
+                {{ getFieldError('section') }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subject Assignment Section -->
+      <div class="form-section">
+        <h4 class="section-title">Subject Assignment</h4>
+        
+        <div class="row">
+          <!-- Available Subjects -->
+          <div class="col-md-6">
+            <label class="form-label">Available Subjects</label>
+            <div class="subject-list available-subjects">
+              <div 
+                *ngFor="let subject of filteredAvailableSubjects" 
+                class="subject-item"
+                (click)="onSubjectSelect(subject)">
+                <span class="subject-name">{{ subject.name }}</span>
+                <span class="subject-code">({{ subject.code }})</span>
+                <i class="fas fa-plus-circle add-icon"></i>
+              </div>
+              <div *ngIf="filteredAvailableSubjects.length === 0" class="no-subjects">
+                No available subjects for selected level
+              </div>
+            </div>
+          </div>
+
+          <!-- Selected Subjects -->
+          <div class="col-md-6">
+            <label class="form-label">Selected Subjects</label>
+            <div class="subject-list selected-subjects">
+              <div 
+                *ngFor="let subject of selectedSubjects" 
+                class="subject-item selected">
+                <span class="subject-name">{{ subject.name }}</span>
+                <span class="subject-code">({{ subject.code }})</span>
+                <i class="fas fa-times-circle remove-icon" (click)="removeSubject(subject)"></i>
+              </div>
+              <div *ngIf="selectedSubjects.length === 0" class="no-subjects">
+                No subjects selected
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isLoading">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="!studentForm.valid || isLoading">
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isEditMode ? 'Update Student' : 'Create Student' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

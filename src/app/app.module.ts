@@ -15,13 +15,18 @@ import { FooterComponent } from './layouts/footer/footer.component';
 import { SidebarComponent } from './layouts/sidebar/sidebar.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { StudentsComponent } from './features/students/students.component';
-import { TeachersComponent } from './features/teachers/teachers.component';
 import { ClassesComponent } from './features/classes/classes.component';
-import { SubjectsComponent } from './features/subjects/subjects.component';
 import { AssessmentsComponent } from './features/assessments/assessments.component';
 import { ReportsComponent } from './features/reports/reports.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SubjectListComponent } from './features/subjects/subject-list/subject-list.component';
+import { SubjectFormComponent } from './features/subjects/subject-form/subject-form.component';
+import { StudentListComponent } from './features/students/student-list/student-list.component';
+import { StudentFormComponent } from './features/students/student-form/student-form.component';
+import { StudentDetailComponent } from './features/students/student-detail/student-detail.component';
+import { SubjectDetailComponent } from './features/subjects/subject-detail/subject-detail.component';
+import { TeacherListComponent } from './features/teachers/teacher-list/teacher-list.component';
+import { TeacherFormComponent } from './features/teachers/teacher-form/teacher-form.component';
 
 @NgModule({
   declarations: [
@@ -33,12 +38,17 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     SidebarComponent,
     MainLayoutComponent,
     DashboardComponent,
-    StudentsComponent,
-    TeachersComponent,
     ClassesComponent,
-    SubjectsComponent,
     AssessmentsComponent,
-    ReportsComponent
+    ReportsComponent,
+    SubjectListComponent,
+    SubjectFormComponent,
+    StudentListComponent,
+    StudentFormComponent,
+    StudentDetailComponent,
+    SubjectDetailComponent,
+    TeacherListComponent,
+    TeacherFormComponent
   ],
   imports: [
     BrowserModule,

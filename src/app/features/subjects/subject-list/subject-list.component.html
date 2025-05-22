@@ -1,0 +1,219 @@
+<div class="subject-list">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-book"></i>
+        Subject Management
+      </h1>
+      <button 
+        *ngIf="canCreateOrEdit()" 
+        class="btn btn-primary"
+        (click)="createSubject()">
+        <i class="fas fa-plus"></i>
+        Add Subject
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading subjects...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>{{ error }}</h3>
+      <button class="btn btn-primary" (click)="retry()">
+        <i class="fas fa-redo"></i> Retry
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading && !error" class="content">
+    <!-- Filters -->
+    <div class="filters-section">
+      <div class="filters-row">
+        <!-- Search -->
+        <div class="filter-group search-group">
+          <div class="search-input-container">
+            <i class="fas fa-search search-icon"></i>
+            <input 
+              type="text" 
+              class="form-control search-input"
+              placeholder="Search subjects..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()">
+          </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-group">
+          <label>Category:</label>
+          <select class="form-control" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+            <option value="ALL">All Categories</option>
+            <option *ngFor="let category of categories" [value]="category">
+              {{ getCategoryDisplayName(category) }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Level Filter -->
+        <div class="filter-group">
+          <label>Level:</label>
+          <select class="form-control" [(ngModel)]="selectedLevel" (change)="onLevelChange()">
+            <option value="ALL">All Levels</option>
+            <option *ngFor="let level of levels" [value]="level">
+              {{ level }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Clear Filters -->
+        <div class="filter-group">
+          <button class="btn btn-outline-secondary" (click)="clearFilters()">
+            <i class="fas fa-times"></i> Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Summary -->
+      <div class="results-summary">
+        <span>
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - 
+          {{ Math.min(currentPage * itemsPerPage, filteredSubjects.length) }} 
+          of {{ filteredSubjects.length }} subjects
+        </span>
+      </div>
+    </div>
+
+    <!-- Subjects Table -->
+    <div class="table-container" *ngIf="filteredSubjects.length > 0">
+      <table class="subjects-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Level</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let subject of getPaginatedSubjects()">
+            <td>
+              <span class="subject-code">{{ subject.code }}</span>
+            </td>
+            <td>
+              <div class="subject-name">
+                {{ subject.name }}
+              </div>
+            </td>
+            <td>
+              <span class="level-badge" [class]="'level-' + subject.level.toLowerCase()">
+                {{ subject.level }}
+              </span>
+            </td>
+            <td>
+              <span class="category-badge">
+                {{ getCategoryDisplayName(subject.category) }}
+              </span>
+            </td>
+            <td>
+              <span class="description" [title]="subject.description">
+                {{ subject.description || 'No description' }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button 
+                  class="btn btn-sm btn-info action-btn"
+                  (click)="viewSubject(subject)"
+                  title="View Details">
+                  <i class="fas fa-eye"></i>
+                </button>
+                
+                <button 
+                  *ngIf="canCreateOrEdit()"
+                  class="btn btn-sm btn-warning action-btn"
+                  (click)="editSubject(subject)"
+                  title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                
+                <button 
+                  *ngIf="canDelete()"
+                  class="btn btn-sm btn-danger action-btn"
+                  (click)="deleteSubject(subject)"
+                  title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredSubjects.length === 0" class="empty-state">
+      <div class="empty-content">
+        <i class="fas fa-book-open"></i>
+        <h3>No Subjects Found</h3>
+        <p *ngIf="searchTerm || selectedCategory !== 'ALL' || selectedLevel !== 'ALL'">
+          No subjects match your current filters. Try adjusting your search criteria.
+        </p>
+        <p *ngIf="!searchTerm && selectedCategory === 'ALL' && selectedLevel === 'ALL'">
+          No subjects have been added yet.
+        </p>
+        <button 
+          *ngIf="canCreateOrEdit() && !searchTerm && selectedCategory === 'ALL' && selectedLevel === 'ALL'"
+          class="btn btn-primary"
+          (click)="createSubject()">
+          <i class="fas fa-plus"></i>
+          Add First Subject
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="pagination-container">
+      <nav class="pagination-nav">
+        <button 
+          class="btn btn-sm btn-outline-primary"
+          [disabled]="currentPage === 1"
+          (click)="previousPage()">
+          <i class="fas fa-chevron-left"></i>
+          Previous
+        </button>
+
+        <div class="page-numbers">
+          <button 
+            *ngFor="let page of getPageNumbers()"
+            class="btn btn-sm page-btn"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        </div>
+
+        <button 
+          class="btn btn-sm btn-outline-primary"
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()">
+          Next
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </nav>
+
+      <div class="pagination-info">
+        Page {{ currentPage }} of {{ totalPages }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<div class="subject-detail-container">
+  <div class="page-header">
+    <div class="header-content">
+      <button class="btn btn-secondary btn-sm" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Subjects
+      </button>
+      <h1>Subject Details</h1>
+    </div>
+    <div class="header-actions" *ngIf="subject">
+      <button 
+        *ngIf="canEdit" 
+        class="btn btn-primary btn-sm" 
+        (click)="editSubject()">
+        <i class="fas fa-edit"></i> Edit
+      </button>
+      <button 
+        *ngIf="canDelete" 
+        class="btn btn-danger btn-sm" 
+        (click)="deleteSubject()">
+        <i class="fas fa-trash"></i> Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <p>Loading subject details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ error }}
+  </div>
+
+  <!-- Subject Details -->
+  <div *ngIf="subject && !loading" class="subject-details">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ subject.name }}</h3>
+        <span class="badge badge-level" [class]="'badge-' + subject.level.toLowerCase()">
+          {{ subject.level }}
+        </span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="detail-group">
+              <label class="detail-label">Subject Code:</label>
+              <span class="detail-value">{{ subject.code }}</span>
+            </div>
+            <div class="detail-group">
+              <label class="detail-label">Level:</label>
+              <span class="detail-value">{{ subject.level }}</span>
+            </div>
+            <div class="detail-group">
+              <label class="detail-label">Category:</label>
+              <span class="detail-value category-badge" [class]="'category-' + subject.category.toLowerCase()">
+                {{ subject.category | titlecase }}
+              </span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-group" *ngIf="subject.description">
+              <label class="detail-label">Description:</label>
+              <p class="detail-value description">{{ subject.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4 class="card-title">Subject Information</h4>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <i class="fas fa-graduation-cap info-icon"></i>
+            <div class="info-content">
+              <span class="info-label">Education Level</span>
+              <span class="info-value">{{ subject.level === 'O-LEVEL' ? 'Ordinary Level (Forms 1-4)' : 'Advanced Level (Forms 5-6)' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-tags info-icon"></i>
+            <div class="info-content">
+              <span class="info-label">Subject Category</span>
+              <span class="info-value">{{ getCategoryDescription(subject.category) }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-code info-icon"></i>
+            <div class="info-content">
+              <span class="info-label">Subject Code</span>
+              <span class="info-value">{{ subject.code }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

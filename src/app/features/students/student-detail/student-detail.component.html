@@ -1,0 +1,264 @@
+<div class="student-detail-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+    <button class="btn btn-secondary ms-3" (click)="onBack()">Go Back</button>
+  </div>
+
+  <!-- Student Details -->
+  <div *ngIf="student && !isLoading" class="student-content">
+    <!-- Header Section -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="student-info">
+          <div class="student-avatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <div class="student-details">
+            <h2 class="student-name">{{ student.firstName }} {{ student.lastName }}</h2>
+            <p class="student-meta">
+              <span class="badge badge-primary">{{ student.studentId }}</span>
+              <span class="separator">•</span>
+              <span>{{ student.form }} {{ student.section }}</span>
+              <span class="separator">•</span>
+              <span>{{ student.level }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-secondary" (click)="onBack()">
+            <i class="fas fa-arrow-left me-2"></i>Back
+          </button>
+          <button *ngIf="canEdit" class="btn btn-primary" (click)="onEdit()">
+            <i class="fas fa-edit me-2"></i>Edit
+          </button>
+          <button *ngIf="canDelete" class="btn btn-danger" (click)="onDelete()">
+            <i class="fas fa-trash me-2"></i>Delete
+          </button>
+        </div>
+      </div>
+
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+          <li class="breadcrumb-item"><a routerLink="/students">Students</a></li>
+          <li class="breadcrumb-item active">{{ student.firstName }} {{ student.lastName }}</li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <button 
+            class="nav-link"
+            [class.active]="activeTab === 'overview'"
+            (click)="setActiveTab('overview')">
+            <i class="fas fa-user me-2"></i>Overview
+          </button>
+        </li>
+        <li class="nav-item">
+          <button 
+            class="nav-link"
+            [class.active]="activeTab === 'subjects'"
+            (click)="setActiveTab('subjects')">
+            <i class="fas fa-book me-2"></i>Subjects
+          </button>
+        </li>
+        <li class="nav-item">
+          <button 
+            class="nav-link"
+            [class.active]="activeTab === 'guardians'"
+            (click)="setActiveTab('guardians')">
+            <i class="fas fa-users me-2"></i>Guardians
+          </button>
+        </li>
+        <li class="nav-item" *ngIf="canViewAssessments">
+          <button 
+            class="nav-link"
+            [class.active]="activeTab === 'assessments'"
+            (click)="setActiveTab('assessments')">
+            <i class="fas fa-chart-line me-2"></i>Assessments
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Overview Tab -->
+      <div *ngIf="activeTab === 'overview'" class="tab-pane active">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="info-card">
+              <h4 class="card-title">Student Information</h4>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Full Name:</label>
+                  <span>{{ student.firstName }} {{ student.lastName }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Student ID:</label>
+                  <span>{{ student.studentId }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Class:</label>
+                  <span>{{ student.form }} {{ student.section }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Level:</label>
+                  <span>{{ student.level }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Total Subjects:</label>
+                  <span>{{ studentSubjects.length }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Guardians:</label>
+                  <span>{{ guardians.length }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="info-card">
+              <h4 class="card-title">Performance Summary</h4>
+              <div class="performance-summary">
+                <div class="performance-circle">
+                  <div class="circle-progress" [class]="getPerformanceClass(getAverageScore())">
+                    <span class="percentage">{{ getAverageScore() }}%</span>
+                  </div>
+                  <p class="performance-label">Average Score</p>
+                </div>
+                <div class="performance-stats">
+                  <div class="stat-item">
+                    <span class="stat-value">{{ recentAssessments.length }}</span>
+                    <span class="stat-label">Recent Assessments</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subjects Tab -->
+      <div *ngIf="activeTab === 'subjects'" class="tab-pane active">
+        <div class="info-card">
+          <h4 class="card-title">Enrolled Subjects</h4>
+          <div *ngIf="studentSubjects.length === 0" class="no-data">
+            No subjects assigned to this student.
+          </div>
+          <div *ngIf="studentSubjects.length > 0">
+            <div *ngFor="let category of getSubjectsByCategory() | keyvalue" class="subject-category">
+              <h5 class="category-title">{{ category.key }}</h5>
+              <div class="subject-grid">
+                <div *ngFor="let subject of category.value" class="subject-card">
+                  <div class="subject-info">
+                    <h6 class="subject-name">{{ subject.name }}</h6>
+                    <p class="subject-code">{{ subject.code }}</p>
+                  </div>
+                  <div class="subject-level">
+                    <span class="badge badge-secondary">{{ subject.level }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guardians Tab -->
+      <div *ngIf="activeTab === 'guardians'" class="tab-pane active">
+        <div class="info-card">
+          <h4 class="card-title">Guardian Information</h4>
+          <div *ngIf="guardians.length === 0" class="no-data">
+            No guardians registered for this student.
+          </div>
+          <div *ngIf="guardians.length > 0">
+            <!-- Primary Guardian -->
+            <div *ngIf="getPrimaryGuardian() as primaryGuardian" class="guardian-section">
+              <h5 class="section-title">Primary Guardian</h5>
+              <div class="guardian-card primary">
+                <div class="guardian-info">
+                  <h6 class="guardian-name">{{ primaryGuardian.name }}</h6>
+                  <p class="guardian-relationship">{{ primaryGuardian.relationship }}</p>
+                </div>
+                <div class="guardian-contacts">
+                  <div class="contact-item">
+                    <i class="fas fa-phone me-2"></i>
+                    <span>{{ primaryGuardian.phoneNumber }}</span>
+                  </div>
+                  <div *ngIf="primaryGuardian.whatsappNumber" class="contact-item">
+                    <i class="fab fa-whatsapp me-2"></i>
+                    <span>{{ primaryGuardian.whatsappNumber }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Secondary Guardians -->
+            <div *ngIf="getSecondaryGuardians().length > 0" class="guardian-section">
+              <h5 class="section-title">Other Guardians</h5>
+              <div class="guardian-grid">
+                <div *ngFor="let guardian of getSecondaryGuardians()" class="guardian-card">
+                  <div class="guardian-info">
+                    <h6 class="guardian-name">{{ guardian.name }}</h6>
+                    <p class="guardian-relationship">{{ guardian.relationship }}</p>
+                  </div>
+                  <div class="guardian-contacts">
+                    <div class="contact-item">
+                      <i class="fas fa-phone me-2"></i>
+                      <span>{{ guardian.phoneNumber }}</span>
+                    </div>
+                    <div *ngIf="guardian.whatsappNumber" class="contact-item">
+                      <i class="fab fa-whatsapp me-2"></i>
+                      <span>{{ guardian.whatsappNumber }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assessments Tab -->
+      <div *ngIf="activeTab === 'assessments' && canViewAssessments" class="tab-pane active">
+        <div class="info-card">
+          <h4 class="card-title">Recent Assessments</h4>
+          <div *ngIf="recentAssessments.length === 0" class="no-data">
+            No recent assessments found.
+          </div>
+          <div *ngIf="recentAssessments.length > 0" class="assessment-list">
+            <div *ngFor="let assessment of recentAssessments" class="assessment-card">
+              <div class="assessment-info">
+                <h6 class="assessment-title">{{ assessment.title }}</h6>
+                <p class="assessment-subject">{{ assessment.studentSubject.subject.name }}</p>
+                <p class="assessment-date">{{ formatDate(assessment.date) }}</p>
+              </div>
+              <div class="assessment-score">
+                <div class="score-display" [class]="getPerformanceClass((assessment.score / assessment.maxScore) * 100)">
+                  <span class="score">{{ assessment.score }}/{{ assessment.maxScore }}</span>
+                  <span class="percentage">{{ ((assessment.score / assessment.maxScore) * 100) | number:'1.0-0' }}%</span>
+                </div>
+                <span class="assessment-type badge">{{ assessment.type }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

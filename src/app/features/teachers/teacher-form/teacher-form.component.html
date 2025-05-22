@@ -1,0 +1,185 @@
+<div class="teacher-form-container">
+  <div class="page-header">
+    <div class="header-content">
+      <button class="btn btn-secondary btn-sm" (click)="cancel()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <h1><i class="fas fa-chalkboard-teacher"></i> {{ pageTitle }}</h1>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading && isEditMode" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <p>Loading teacher details...</p>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="success" class="alert alert-success">
+    <i class="fas fa-check-circle"></i>
+    {{ success }}
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ error }}
+  </div>
+
+  <!-- Form -->
+  <div *ngIf="!loading || !isEditMode" class="form-container">
+    <form [formGroup]="teacherForm" (ngSubmit)="onSubmit()">
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ isEditMode ? 'Teacher Information' : 'New Teacher Details' }}</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Personal Information -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="firstName" class="form-label required">
+                  <i class="fas fa-user"></i> First Name
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  class="form-control"
+                  formControlName="firstName"
+                  placeholder="Enter first name"
+                  [class.is-invalid]="isFieldInvalid('firstName')">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('firstName')">
+                  {{ getFieldError('firstName') }}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="lastName" class="form-label required">
+                  <i class="fas fa-user"></i> Last Name
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  class="form-control"
+                  formControlName="lastName"
+                  placeholder="Enter last name"
+                  [class.is-invalid]="isFieldInvalid('lastName')">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('lastName')">
+                  {{ getFieldError('lastName') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Employee Information -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="employeeId" class="form-label required">
+                  <i class="fas fa-id-badge"></i> Employee ID
+                </label>
+                <input
+                  type="text"
+                  id="employeeId"
+                  class="form-control"
+                  formControlName="employeeId"
+                  placeholder="Enter employee ID"
+                  [class.is-invalid]="isFieldInvalid('employeeId')">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('employeeId')">
+                  {{ getFieldError('employeeId') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="username" class="form-label required">
+                  <i class="fas fa-at"></i> Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  class="form-control"
+                  formControlName="username"
+                  placeholder="Enter username"
+                  [readonly]="isEditMode"
+                  [class.is-invalid]="isFieldInvalid('username')">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('username')">
+                  {{ getFieldError('username') }}
+                </div>
+                <small *ngIf="isEditMode" class="form-text text-muted">
+                  Username cannot be changed
+                </small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="email" class="form-label required">
+                  <i class="fas fa-envelope"></i> Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  class="form-control"
+                  formControlName="email"
+                  placeholder="Enter email address"
+                  [readonly]="isEditMode"
+                  [class.is-invalid]="isFieldInvalid('email')">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+                  {{ getFieldError('email') }}
+                </div>
+                <small *ngIf="isEditMode" class="form-text text-muted">
+                  Email cannot be changed
+                </small>
+              </div>
+            </div>
+
+            <div class="col-md-6" *ngIf="!isEditMode">
+              <div class="form-group">
+                <label for="password" class="form-label required">
+                  <i class="fas fa-lock"></i> Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Enter password"
+                  [class.is-invalid]="isFieldInvalid('password')">
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('password')">
+                  {{ getFieldError('password') }}
+                </div>
+                <small class="form-text text-muted">
+                  Password must be at least 6 characters long
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel()"
+          [disabled]="loading">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="loading || teacherForm.invalid">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!loading" class="fas" [class.fa-plus]="!isEditMode" [class.fa-save]="isEditMode"></i>
+          {{ loading ? 'Processing...' : submitButtonText }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
