@@ -1,0 +1,197 @@
+<!-- mark-attendance.component.html -->
+<div class="mark-attendance-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-check-circle"></i>
+        Mark Attendance
+      </h1>
+      <p class="page-description">Mark attendance for students in your class</p>
+    </div>
+    <div class="header-actions">
+      <button 
+        class="btn btn-outline-secondary"
+        (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        Back to Attendance
+      </button>
+    </div>
+  </div>
+
+  <!-- Selection Form -->
+  <div class="selection-card">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-cog"></i>
+          Attendance Settings
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="selection-form">
+          <div class="form-group">
+            <label for="attendanceDate" class="form-label">Date *</label>
+            <input 
+              type="date" 
+              id="attendanceDate"
+              class="form-control"
+              [(ngModel)]="attendanceDate"
+              [max]="getMaxDate()">
+          </div>
+          
+          <div class="form-group">
+            <label for="classSelect" class="form-label">Class *</label>
+            <select 
+              id="classSelect"
+              class="form-select"
+              (change)="onClassChange($event)">
+              <option value="">Select a class</option>
+              <option 
+                *ngFor="let cls of classes" 
+                [value]="cls.form + '-' + cls.section">
+                {{ cls.form }} {{ cls.section }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div *ngIf="success" class="alert alert-success">
+    <i class="fas fa-check-circle"></i>
+    {{ success }}
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ error }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading students...</p>
+  </div>
+
+  <!-- Students List -->
+  <div *ngIf="!loading && students.length > 0" class="attendance-section">
+    <!-- Summary and Controls -->
+    <div class="controls-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="controls-row">
+            <div class="summary-info">
+              <div class="summary-item">
+                <span class="label">Total Students:</span>
+                <span class="value">{{ students.length }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Present:</span>
+                <span class="value present">{{ getPresentCount() }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Absent:</span>
+                <span class="value absent">{{ getAbsentCount() }}</span>
+              </div>
+            </div>
+            
+            <div class="control-actions">
+              <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input 
+                  type="text" 
+                  placeholder="Search students..."
+                  [(ngModel)]="searchTerm"
+                  class="form-control">
+              </div>
+              
+              <div class="bulk-actions">
+                <label class="checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    [(ngModel)]="allPresent"
+                    (change)="toggleAllAttendance()">
+                  <span class="checkmark"></span>
+                  Mark All Present
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Students Attendance List -->
+    <div class="students-card">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-users"></i>
+            Students - {{ selectedClass?.form }} {{ selectedClass?.section }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="students-grid">
+            <div 
+              *ngFor="let record of getFilteredStudents(); trackBy: trackByStudentId"
+              class="student-card"
+              [class.present]="record.present"
+              [class.absent]="!record.present">
+              
+              <div class="student-info">
+                <div class="student-avatar">
+                  {{ record.student.firstName.charAt(0) }}{{ record.student.lastName.charAt(0) }}
+                </div>
+                <div class="student-details">
+                  <div class="student-name">
+                    {{ record.student.firstName }} {{ record.student.lastName }}
+                  </div>
+                  <div class="student-id">ID: {{ record.student.studentId }}</div>
+                </div>
+              </div>
+              
+              <div class="attendance-controls">
+                <div class="attendance-buttons">
+                  <button 
+                    class="btn-attendance present"
+                    [class.active]="record.present"
+                    (click)="record.present = true; updateAllPresentStatus()">
+                    <i class="fas fa-check"></i>
+                    Present
+                  </button>
+                  <button 
+                    class="btn-attendance absent"
+                    [class.active]="!record.present"
+                    (click)="record.present = false; updateAllPresentStatus()">
+                    <i class="fas fa-times"></i>
+                    Absent
+                  </button>
+                </div>
+                
+                <div *ngIf="record.marked" class="marked-indicator">
+                  <i class="fas fa-check-circle"></i>
+                  Marked
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="submit-section">
+    <button 
+      class="btn btn-primary btn-lg"
+      [disabled]="!canMarkAttendance() || saving"
+      (click)="markAttendance()">
+      <i *ngIf="saving" class="fas fa-spinner fa-spin"></i>
+      <i *ngIf="!saving" class="fas fa-save"></i>
+      {{ saving ? 'Saving...' : 'Save Attendance' }}
+    </button>
+    </div>
+  </div>
+</div>

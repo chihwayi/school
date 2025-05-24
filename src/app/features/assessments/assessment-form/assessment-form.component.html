@@ -1,0 +1,219 @@
+<div class="assessment-form-container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="header-content">
+          <div class="title-section">
+            <button class="btn btn-link back-btn" (click)="goBack()">
+              <i class="fas fa-arrow-left"></i>
+              Back to Assessments
+            </button>
+            <h1>{{ isEditMode ? 'Edit Assessment' : 'Record New Assessment' }}</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="form-container">
+        <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+          <div class="form-grid">
+            <!-- Subject and Class Selection -->
+            <div class="form-group" *ngIf="!isEditMode">
+              <label for="subjectClass">Subject & Class *</label>
+              <select 
+                id="subjectClass" 
+                class="form-select" 
+                formControlName="subjectClass"
+                (change)="onSubjectClassChange()">
+                <option value="">Select Subject & Class</option>
+                <option 
+                  *ngFor="let sc of teacherSubjectClasses" 
+                  [value]="sc.id">
+                  {{ sc.subject.name }} - {{ sc.form }} {{ sc.section }}
+                </option>
+              </select>
+              <div *ngIf="assessmentForm.get('subjectClass')?.invalid && assessmentForm.get('subjectClass')?.touched" 
+                   class="error-message">
+                Subject and class selection is required
+              </div>
+            </div>
+
+            <!-- Student Selection -->
+            <div class="form-group" *ngIf="!isEditMode">
+              <label for="student">Student *</label>
+              <select 
+                id="student" 
+                class="form-select" 
+                formControlName="studentSubjectId"
+                [disabled]="!selectedSubjectClass">
+                <option value="">Select Student</option>
+                <option 
+                  *ngFor="let student of studentsInClass" 
+                  [value]="getStudentSubjectId(student)">
+                  {{ student.firstName }} {{ student.lastName }} ({{ student.studentId }})
+                </option>
+              </select>
+              <div *ngIf="assessmentForm.get('studentSubjectId')?.invalid && assessmentForm.get('studentSubjectId')?.touched" 
+                   class="error-message">
+                Student selection is required
+              </div>
+            </div>
+
+            <!-- Assessment Title -->
+            <div class="form-group">
+              <label for="title">Assessment Title *</label>
+              <input 
+                type="text" 
+                id="title" 
+                class="form-control" 
+                formControlName="title"
+                placeholder="e.g., Mid-term Exam, Chapter 5 Test">
+              <div *ngIf="assessmentForm.get('title')?.invalid && assessmentForm.get('title')?.touched" 
+                   class="error-message">
+                Assessment title is required
+              </div>
+            </div>
+
+            <!-- Assessment Type -->
+            <div class="form-group">
+              <label for="type">Assessment Type *</label>
+              <select id="type" class="form-select" formControlName="type">
+                <option value="">Select Type</option>
+                <option value="EXAM">Exam</option>
+                <option value="TEST">Test</option>
+                <option value="CLASSWORK">Classwork</option>
+                <option value="HOMEWORK">Homework</option>
+                <option value="PROJECT">Project</option>
+                <option value="OTHER">Other</option>
+              </select>
+              <div *ngIf="assessmentForm.get('type')?.invalid && assessmentForm.get('type')?.touched" 
+                   class="error-message">
+                Assessment type is required
+              </div>
+            </div>
+
+            <!-- Date -->
+            <div class="form-group">
+              <label for="date">Date *</label>
+              <input 
+                type="date" 
+                id="date" 
+                class="form-control" 
+                formControlName="date">
+              <div *ngIf="assessmentForm.get('date')?.invalid && assessmentForm.get('date')?.touched" 
+                   class="error-message">
+                Date is required
+              </div>
+            </div>
+
+            <!-- Score -->
+            <div class="form-group">
+              <label for="score">Score *</label>
+              <input 
+                type="number" 
+                id="score" 
+                class="form-control" 
+                formControlName="score"
+                min="0"
+                [max]="assessmentForm.get('maxScore')?.value || 100"
+                placeholder="Student's score">
+              <div *ngIf="assessmentForm.get('score')?.invalid && assessmentForm.get('score')?.touched" 
+                   class="error-message">
+                <span *ngIf="assessmentForm.get('score')?.errors?.['required']">Score is required</span>
+                <span *ngIf="assessmentForm.get('score')?.errors?.['min']">Score cannot be negative</span>
+                <span *ngIf="assessmentForm.get('score')?.errors?.['max']">Score cannot exceed maximum score</span>
+              </div>
+            </div>
+
+            <!-- Maximum Score -->
+            <div class="form-group">
+              <label for="maxScore">Maximum Score *</label>
+              <input 
+                type="number" 
+                id="maxScore" 
+                class="form-control" 
+                formControlName="maxScore"
+                min="1"
+                placeholder="Total marks">
+              <div *ngIf="assessmentForm.get('maxScore')?.invalid && assessmentForm.get('maxScore')?.touched" 
+                   class="error-message">
+                <span *ngIf="assessmentForm.get('maxScore')?.errors?.['required']">Maximum score is required</span>
+                <span *ngIf="assessmentForm.get('maxScore')?.errors?.['min']">Maximum score must be at least 1</span>
+              </div>
+            </div>
+
+            <!-- Term -->
+            <div class="form-group">
+              <label for="term">Term *</label>
+              <select id="term" class="form-select" formControlName="term">
+                <option value="">Select Term</option>
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3">Term 3</option>
+              </select>
+              <div *ngIf="assessmentForm.get('term')?.invalid && assessmentForm.get('term')?.touched" 
+                   class="error-message">
+                Term is required
+              </div>
+            </div>
+
+            <!-- Academic Year -->
+            <div class="form-group">
+              <label for="academicYear">Academic Year *</label>
+              <select id="academicYear" class="form-select" formControlName="academicYear">
+                <option value="">Select Academic Year</option>
+                <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
+              </select>
+              <div *ngIf="assessmentForm.get('academicYear')?.invalid && assessmentForm.get('academicYear')?.touched" 
+                   class="error-message">
+                Academic year is required
+              </div>
+            </div>
+          </div>
+
+          <!-- Score Preview -->
+          <div class="score-preview" *ngIf="assessmentForm.get('score')?.value !== null && assessmentForm.get('maxScore')?.value">
+            <div class="score-info">
+              <span class="score-text">
+                Score: {{ assessmentForm.get('score')?.value }}/{{ assessmentForm.get('maxScore')?.value }}
+              </span>
+              <span class="percentage-text">
+                ({{ getPercentage() }}%)
+              </span>
+            </div>
+            <div class="score-bar">
+              <div class="score-fill" [style.width.%]="getPercentage()"></div>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="error" class="error-container">
+            <div class="error-message">
+              <i class="fas fa-exclamation-triangle"></i>
+              {{ error }}
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              <i class="fas fa-times"></i>
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              class="btn btn-primary" 
+              [disabled]="assessmentForm.invalid || submitting">
+              <i class="fas fa-spinner fa-spin" *ngIf="submitting"></i>
+              <i class="fas fa-save" *ngIf="!submitting"></i>
+              {{ submitting ? 'Saving...' : (isEditMode ? 'Update Assessment' : 'Record Assessment') }}
+            </button>
+          </div>
+        </form>
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-container">
+          <div class="spinner"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>

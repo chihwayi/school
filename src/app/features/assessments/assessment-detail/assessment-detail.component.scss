@@ -1,0 +1,562 @@
+.assessment-detail-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e3f2fd;
+      border-top: 4px solid #1976d2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    p {
+      margin-top: 16px;
+      color: #666;
+      font-size: 16px;
+    }
+  }
+  
+  .error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: 2rem;
+    
+    .error-message {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background-color: #ffebee;
+      color: #d32f2f;
+      padding: 16px 24px;
+      border-radius: 8px;
+      border-left: 4px solid #d32f2f;
+      margin-bottom: 24px;
+      font-size: 16px;
+      
+      i {
+        font-size: 18px;
+      }
+    }
+  }
+  
+  .assessment-detail-content {
+    padding: 0;
+  }
+  
+  .page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      
+      .title-section {
+        flex: 1;
+        
+        .back-btn {
+          color: rgba(255, 255, 255, 0.8);
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 1rem;
+          font-size: 14px;
+          padding: 0;
+          border: none;
+          background: none;
+          
+          &:hover {
+            color: white;
+          }
+        }
+        
+        h1 {
+          margin: 0 0 1rem 0;
+          font-size: 2.5rem;
+          font-weight: 300;
+          line-height: 1.2;
+        }
+        
+        .assessment-meta {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          
+          .type-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+          
+          .date {
+            font-size: 14px;
+            opacity: 0.9;
+          }
+        }
+      }
+      
+      .action-buttons {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+        
+        .btn {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 20px;
+          border-radius: 6px;
+          font-size: 14px;
+          text-decoration: none;
+          transition: all 0.2s ease;
+          
+          &.btn-outline-primary {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            color: white;
+            background: transparent;
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.1);
+              border-color: white;
+            }
+          }
+          
+          &.btn-outline-danger {
+            border: 2px solid rgba(244, 67, 54, 0.8);
+            color: #f44336;
+            background: rgba(255, 255, 255, 0.9);
+            
+            &:hover {
+              background: #f44336;
+              color: white;
+              border-color: #f44336;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .info-section {
+    max-width: 1200px;
+    margin: 0 auto 2rem auto;
+    padding: 0 1rem;
+    
+    .info-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      
+      .info-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        
+        .card-header {
+          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+          padding: 1rem 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          border-bottom: 1px solid #e0e0e0;
+          
+          i {
+            color: #1976d2;
+            font-size: 18px;
+          }
+          
+          h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+          }
+        }
+        
+        .card-content {
+          padding: 1.5rem;
+          
+          .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            
+            &:last-child {
+              border-bottom: none;
+            }
+            
+            .label {
+              font-weight: 500;
+              color: #666;
+              font-size: 14px;
+            }
+            
+            .value {
+              font-weight: 400;
+              color: #333;
+              font-size: 14px;
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .score-section {
+    max-width: 1200px;
+    margin: 0 auto 2rem auto;
+    padding: 0 1rem;
+    
+    .score-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      
+      .score-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        
+        h2 {
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 20px;
+          font-weight: 500;
+        }
+      }
+      
+      .score-content {
+        padding: 2rem;
+        
+        .score-display {
+          text-align: center;
+          margin-bottom: 2rem;
+          
+          .score-main {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            
+            .score-value {
+              font-size: 4rem;
+              font-weight: 700;
+              color: #1976d2;
+              line-height: 1;
+            }
+            
+            .score-separator {
+              font-size: 2rem;
+              color: #666;
+              font-weight: 300;
+            }
+            
+            .max-score {
+              font-size: 2rem;
+              color: #666;
+              font-weight: 400;
+            }
+          }
+          
+          .percentage-display {
+            .percentage-value {
+              font-size: 1.5rem;
+              font-weight: 600;
+              color: #333;
+              background: #f5f7fa;
+              padding: 8px 20px;
+              border-radius: 25px;
+              display: inline-block;
+            }
+          }
+        }
+        
+        .score-bar-container {
+          margin-bottom: 2rem;
+          
+          .score-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            
+            .score-fill {
+              height: 100%;
+              border-radius: 10px;
+              transition: width 0.8s ease-in-out;
+              
+              &.score-excellent {
+                background: linear-gradient(90deg, #4caf50, #2e7d32);
+              }
+              
+              &.score-good {
+                background: linear-gradient(90deg, #8bc34a, #558b2f);
+              }
+              
+              &.score-satisfactory {
+                background: linear-gradient(90deg, #ffc107, #f57c00);
+              }
+              
+              &.score-pass {
+                background: linear-gradient(90deg, #ff9800, #e65100);
+              }
+              
+              &.score-fail {
+                background: linear-gradient(90deg, #f44336, #c62828);
+              }
+            }
+          }
+          
+          .score-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+          }
+        }
+        
+        .grade-info {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          
+          .grade-badge {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            
+            &.grade-a {
+              background: linear-gradient(135deg, #4caf50, #2e7d32);
+            }
+            
+            &.grade-b {
+              background: linear-gradient(135deg, #8bc34a, #558b2f);
+            }
+            
+            &.grade-c {
+              background: linear-gradient(135deg, #ffc107, #f57c00);
+            }
+            
+            &.grade-d {
+              background: linear-gradient(135deg, #ff9800, #e65100);
+            }
+            
+            &.grade-e {
+              background: linear-gradient(135deg, #ff5722, #d84315);
+            }
+            
+            &.grade-u {
+              background: linear-gradient(135deg, #f44336, #c62828);
+            }
+          }
+          
+          .performance-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+  
+  .additional-info {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    
+    .info-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      
+      .card-header {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid #e0e0e0;
+        
+        i {
+          color: #1976d2;
+          font-size: 18px;
+        }
+        
+        h3 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+        }
+      }
+      
+      .card-content {
+        padding: 1.5rem;
+        
+        p {
+          margin: 0;
+          color: #666;
+          line-height: 1.6;
+        }
+      }
+    }
+  }
+  
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &.btn-primary {
+      background: #1976d2;
+      color: white;
+      
+      &:hover {
+        background: #1565c0;
+      }
+    }
+    
+    &.btn-link {
+      background: none;
+      color: #1976d2;
+      padding: 0;
+      
+      &:hover {
+        color: #1565c0;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Type badges
+.type-exam {
+  background: linear-gradient(135deg, #f44336, #c62828) !important;
+}
+
+.type-test {
+  background: linear-gradient(135deg, #ff9800, #e65100) !important;
+}
+
+.type-classwork {
+  background: linear-gradient(135deg, #2196f3, #1565c0) !important;
+}
+
+.type-homework {
+  background: linear-gradient(135deg, #9c27b0, #6a1b9a) !important;
+}
+
+.type-project {
+  background: linear-gradient(135deg, #4caf50, #2e7d32) !important;
+}
+
+.type-other {
+  background: linear-gradient(135deg, #607d8b, #37474f) !important;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .assessment-detail-container {
+    .page-header {
+      .header-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        
+        .title-section {
+          h1 {
+            font-size: 2rem;
+          }
+        }
+        
+        .action-buttons {
+          justify-content: flex-start;
+        }
+      }
+    }
+    
+    .info-section {
+      .info-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+    
+    .score-section {
+      .score-content {
+        padding: 1rem;
+        
+        .score-display {
+          .score-main {
+            .score-value {
+              font-size: 3rem;
+            }
+            
+            .max-score {
+              font-size: 1.5rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,243 @@
+<div class="class-report-container">
+  <!-- Header Section -->
+  <div class="report-header">
+    <div class="header-content">
+      <div class="title-section">
+        <button class="back-btn" (click)="goBack()" aria-label="Go back">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="title-info">
+          <h1 class="page-title">Class Report</h1>
+          <div class="class-info" *ngIf="classGroup">
+            <span class="class-name">{{ classGroup.form }} {{ classGroup.section }}</span>
+            <span class="academic-year">{{ classGroup.academicYear }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="btn btn-outline" (click)="exportToExcel()" [disabled]="loading">
+          <i class="fas fa-file-excel"></i>
+          Export Excel
+        </button>
+        <button class="btn btn-primary" (click)="exportToPDF()" [disabled]="loading">
+          <i class="fas fa-file-pdf"></i>
+          Export PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="term-select">Term:</label>
+      <select 
+        id="term-select" 
+        class="form-select" 
+        [(ngModel)]="selectedTerm" 
+        (change)="onTermChange()"
+        [disabled]="loading">
+        <option *ngFor="let term of terms" [value]="term.value">
+          {{ term.label }}
+        </option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="year-select">Academic Year:</label>
+      <select 
+        id="year-select" 
+        class="form-select" 
+        [(ngModel)]="selectedYear" 
+        (change)="onYearChange()"
+        [disabled]="loading">
+        <option [value]="selectedYear">{{ selectedYear }}</option>
+        <option [value]="(+selectedYear - 1).toString()">{{ +selectedYear - 1 }}</option>
+        <option [value]="(+selectedYear + 1).toString()">{{ +selectedYear + 1 }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading class report...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !loading">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>{{ error }}</p>
+      <button class="btn btn-primary" (click)="loadClassReport(classGroup?.id || 0)">
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- Report Content -->
+  <div class="report-content" *ngIf="!loading && !error">
+    <!-- Class Summary -->
+    <div class="summary-section" *ngIf="classGroup && studentReports.length > 0">
+      <h2>Class Summary</h2>
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="card-content">
+            <h3>{{ studentReports.length }}</h3>
+            <p>Total Students</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="card-content">
+            <h3>{{ getClassAverage() | number:'1.1-1' }}%</h3>
+            <p>Class Average</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon">
+            <i class="fas fa-medal"></i>
+          </div>
+          <div class="card-content">
+            <h3>{{ getTopPerformers().length }}</h3>
+            <p>Top Performers (≥80%)</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon">
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+          <div class="card-content">
+            <h3>{{ getAtRiskStudents().length }}</h3>
+            <p>Need Support (<50%)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Reports Table -->
+    <div class="students-table-section" *ngIf="studentReports.length > 0">
+      <h2>Student Performance</h2>
+      
+      <div class="table-container">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th class="rank-col">#</th>
+              <th class="student-col">Student</th>
+              <th class="subjects-col">Subjects</th>
+              <th class="average-col">Overall Average</th>
+              <th class="grade-col">Grade</th>
+              <th class="actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr 
+              *ngFor="let report of getSortedStudentReports(); let i = index" 
+              class="student-row"
+              [class.top-performer]="report.overallAverage >= 80"
+              [class.at-risk]="report.overallAverage < 50">
+              
+              <td class="rank-cell">
+                <span class="rank-number">{{ i + 1 }}</span>
+                <i class="fas fa-trophy rank-icon" *ngIf="i < 3 && report.overallAverage >= 70"></i>
+              </td>
+              
+              <td class="student-cell">
+                <div class="student-info">
+                  <div class="student-avatar">
+                    {{ report.student.firstName.charAt(0) }}{{ report.student.lastName.charAt(0) }}
+                  </div>
+                  <div class="student-details">
+                    <span class="student-name">
+                      {{ report.student.firstName }} {{ report.student.lastName }}
+                    </span>
+                    <span class="student-id">ID: {{ report.student.studentId }}</span>
+                  </div>
+                </div>
+              </td>
+              
+              <td class="subjects-cell">
+                <div class="subjects-summary">
+                  <span class="subject-count">{{ getSubjectCount(report) }} subjects</span>
+                  <div class="subject-breakdown">
+                    <div 
+                      *ngFor="let subjectAvg of getSubjectAveragesArray(report); let j = index" 
+                      class="subject-item"
+                      [class.hidden]="j >= 3"
+                      [title]="subjectAvg.subjectName + ': ' + (subjectAvg.average | number:'1.1-1') + '%'">
+                      <span class="subject-name">{{ subjectAvg.subjectName }}</span>
+                      <span class="subject-score" [class]="getGradeClass(subjectAvg.average)">
+                        {{ subjectAvg.average | number:'1.0-0' }}%
+                      </span>
+                    </div>
+                    <span *ngIf="getSubjectCount(report) > 3" class="more-subjects">
+                      +{{ getSubjectCount(report) - 3 }} more
+                    </span>
+                  </div>
+                </div>
+              </td>
+              
+              <td class="average-cell">
+                <div class="average-display">
+                  <span class="average-value" [class]="getGradeClass(report.overallAverage)">
+                    {{ report.overallAverage | number:'1.1-1' }}%
+                  </span>
+                  <div class="progress-bar">
+                    <div 
+                      class="progress-fill" 
+                      [style.width.%]="report.overallAverage"
+                      [class]="getGradeClass(report.overallAverage)">
+                    </div>
+                  </div>
+                </div>
+              </td>
+              
+              <td class="grade-cell">
+                <span class="grade-badge" [class]="getGradeClass(report.overallAverage)">
+                  {{ getGrade(report.overallAverage) }}
+                </span>
+              </td>
+              
+              <td class="actions-cell">
+                <button 
+                  class="btn btn-sm btn-outline"
+                  (click)="viewStudentReport(report.student.id)"
+                  title="View detailed report">
+                  <i class="fas fa-eye"></i>
+                  View Details
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="studentReports.length === 0 && !loading">
+      <div class="empty-content">
+        <i class="fas fa-chart-bar"></i>
+        <h3>No Report Data Available</h3>
+        <p>There are no assessment records for this class in the selected term and year.</p>
+        <div class="empty-actions">
+          <button class="btn btn-primary" (click)="loadClassReport(classGroup?.id || 0)">
+            Refresh Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

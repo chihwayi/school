@@ -1,0 +1,170 @@
+<div class="report-list-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1>
+          <i class="fas fa-chart-bar"></i>
+          Student Reports
+        </h1>
+        <p class="subtitle">Generate and view student performance reports</p>
+      </div>
+      
+      <div class="term-selector">
+        <div class="form-group">
+          <label for="term">Current Term:</label>
+          <select id="term" [(ngModel)]="currentTerm" class="form-control">
+            <option value="Term 1">Term 1</option>
+            <option value="Term 2">Term 2</option>
+            <option value="Term 3">Term 3</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="year">Academic Year:</label>
+          <select id="year" [(ngModel)]="currentYear" class="form-control">
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading reports...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ error }}
+    </div>
+    <button class="btn btn-primary" (click)="loadData()">
+      <i class="fas fa-redo"></i>
+      Try Again
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error" class="main-content">
+    <!-- View Mode Toggle -->
+    <div class="view-toggle">
+      <div class="toggle-buttons">
+        <button 
+          class="btn"
+          [class.btn-primary]="viewMode === 'students'"
+          [class.btn-outline-primary]="viewMode !== 'students'"
+          (click)="switchViewMode('students')">
+          <i class="fas fa-user-graduate"></i>
+          Student Reports
+        </button>
+        <button 
+          class="btn"
+          [class.btn-primary]="viewMode === 'classes'"
+          [class.btn-outline-primary]="viewMode !== 'classes'"
+          (click)="switchViewMode('classes')">
+          <i class="fas fa-users"></i>
+          Class Reports
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+      <div class="filters-row">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            [placeholder]="viewMode === 'students' ? 'Search students...' : 'Search classes...'"
+            class="form-control">
+        </div>
+        
+        <div class="filter-controls">
+          <select [(ngModel)]="selectedForm" (change)="onFilterChange()" class="form-control">
+            <option value="">All Forms</option>
+            <option *ngFor="let form of forms" [value]="form">{{ form }}</option>
+          </select>
+          
+          <select [(ngModel)]="selectedSection" (change)="onFilterChange()" class="form-control">
+            <option value="">All Sections</option>
+            <option *ngFor="let section of sections" [value]="section">{{ section }}</option>
+          </select>
+          
+          <select *ngIf="viewMode === 'students'" [(ngModel)]="selectedLevel" (change)="onFilterChange()" class="form-control">
+            <option value="">All Levels</option>
+            <option *ngFor="let level of levels" [value]="level">{{ level }}</option>
+          </select>
+          
+          <button class="btn btn-outline-secondary" (click)="clearFilters()">
+            <i class="fas fa-times"></i>
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Reports View -->
+    <div *ngIf="viewMode === 'students'" class="students-grid">
+      <div *ngIf="filteredStudents.length === 0" class="no-data">
+        <i class="fas fa-users"></i>
+        <h3>No Students Found</h3>
+        <p>Try adjusting your search criteria or filters.</p>
+      </div>
+      
+      <div *ngFor="let student of filteredStudents" class="student-card" (click)="viewStudentReport(student)">
+        <div class="student-info">
+          <div class="avatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <div class="details">
+            <h3>{{ student.firstName }} {{ student.lastName }}</h3>
+            <p class="student-id">ID: {{ student.studentId }}</p>
+            <div class="class-info">
+              <span class="form-badge">{{ student.form }}</span>
+              <span class="section-badge">{{ student.section }}</span>
+              <span class="level-badge" [class]="student.level.toLowerCase()">{{ student.level }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-icon">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class Reports View -->
+    <div *ngIf="viewMode === 'classes'" class="classes-grid">
+      <div *ngIf="filteredClasses.length === 0" class="no-data">
+        <i class="fas fa-chalkboard-teacher"></i>
+        <h3>No Classes Found</h3>
+        <p>Try adjusting your search criteria or filters.</p>
+      </div>
+      
+      <div *ngFor="let classGroup of filteredClasses" class="class-card" (click)="viewClassReport(classGroup)">
+        <div class="class-info">
+          <div class="class-icon">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+          <div class="details">
+            <h3>{{ classGroup.form }} {{ classGroup.section }}</h3>
+            <p class="academic-year">Academic Year: {{ classGroup.academicYear }}</p>
+            <div class="teacher-info" *ngIf="classGroup.classTeacher">
+              <i class="fas fa-user"></i>
+              <span>{{ classGroup.classTeacher.firstName }} {{ classGroup.classTeacher.lastName }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-icon">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

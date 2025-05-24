@@ -75,7 +75,7 @@ export class SidebarComponent implements OnInit {
           { icon: 'person', label: 'Teachers', route: '/teachers', roles: ['ADMIN', 'CLERK'] },
           { icon: 'groups', label: 'Classes', route: '/classes', roles: ['ADMIN', 'CLERK'] },
           { icon: 'book', label: 'Subjects', route: '/subjects', roles: ['ADMIN', 'CLERK'] },
-          { icon: 'admin_panel_settings', label: 'Users', route: '/users', roles: ['ADMIN'] }
+          //{ icon: 'admin_panel_settings', label: 'Users', route: '/users', roles: ['ADMIN'] }
         ]
       },
       {

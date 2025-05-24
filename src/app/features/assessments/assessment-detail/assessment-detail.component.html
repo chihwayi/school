@@ -1,0 +1,195 @@
+<div class="assessment-detail-container">
+      <!-- Loading state -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading assessment details...</p>
+      </div>
+
+      <!-- Error state -->
+      <div *ngIf="error && !loading" class="error-container">
+        <div class="error-message">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ error }}
+        </div>
+        <button class="btn btn-primary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Back to Assessments
+        </button>
+      </div>
+
+      <!-- Main content -->
+      <div *ngIf="!loading && !error && assessment" class="assessment-detail-content">
+        <!-- Header -->
+        <div class="page-header">
+          <div class="header-content">
+            <div class="title-section">
+              <button class="btn btn-link back-btn" (click)="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                Back to Assessments
+              </button>
+              <h1>{{ assessment.title }}</h1>
+              <div class="assessment-meta">
+                <span class="type-badge" [class]="getTypeClass(assessment.type)">
+                  {{ assessment.type }}
+                </span>
+                <span class="date">{{ formatDate(assessment.date) }}</span>
+              </div>
+            </div>
+            
+            <div class="action-buttons" *ngIf="canEdit">
+              <button class="btn btn-outline-primary" (click)="editAssessment()">
+                <i class="fas fa-edit"></i>
+                Edit Assessment
+              </button>
+              <button class="btn btn-outline-danger" (click)="deleteAssessment()">
+                <i class="fas fa-trash"></i>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assessment Information -->
+        <div class="info-section">
+          <div class="info-cards-grid">
+            <!-- Student Information -->
+            <div class="info-card">
+              <div class="card-header">
+                <i class="fas fa-user-graduate"></i>
+                <h3>Student Information</h3>
+              </div>
+              <div class="card-content">
+                <div class="info-item">
+                  <span class="label">Name:</span>
+                  <span class="value">{{ getStudentName() }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Student ID:</span>
+                  <span class="value">{{ assessment.studentSubject.student.studentId }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Form:</span>
+                  <span class="value">{{ assessment.studentSubject.student.form }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Section:</span>
+                  <span class="value">{{ assessment.studentSubject.student.section }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subject Information -->
+            <div class="info-card">
+              <div class="card-header">
+                <i class="fas fa-book"></i>
+                <h3>Subject Information</h3>
+              </div>
+              <div class="card-content">
+                <div class="info-item">
+                  <span class="label">Subject:</span>
+                  <span class="value">{{ assessment.studentSubject.subject.name }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Code:</span>
+                  <span class="value">{{ assessment.studentSubject.subject.code }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Level:</span>
+                  <span class="value">{{ assessment.studentSubject.subject.level }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Category:</span>
+                  <span class="value">{{ assessment.studentSubject.subject.category }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Assessment Details -->
+            <div class="info-card">
+              <div class="card-header">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Assessment Details</h3>
+              </div>
+              <div class="card-content">
+                <div class="info-item">
+                  <span class="label">Type:</span>
+                  <span class="value">{{ assessment.type }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Date:</span>
+                  <span class="value">{{ formatDate(assessment.date) }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Term:</span>
+                  <span class="value">{{ assessment.term }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Academic Year:</span>
+                  <span class="value">{{ assessment.academicYear }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Section -->
+        <div class="score-section">
+          <div class="score-card">
+            <div class="score-header">
+              <h2>
+                <i class="fas fa-chart-line"></i>
+                Assessment Score
+              </h2>
+            </div>
+            <div class="score-content">
+              <div class="score-display">
+                <div class="score-main">
+                  <span class="score-value">{{ assessment.score }}</span>
+                  <span class="score-separator">/</span>
+                  <span class="max-score">{{ assessment.maxScore }}</span>
+                </div>
+                <div class="percentage-display">
+                  <span class="percentage-value">{{ getPercentage() }}%</span>
+                </div>
+              </div>
+              
+              <div class="score-bar-container">
+                <div class="score-bar">
+                  <div 
+                    class="score-fill" 
+                    [style.width.%]="getPercentage()"
+                    [class]="getScoreClass()">
+                  </div>
+                </div>
+                <div class="score-labels">
+                  <span class="min-label">0</span>
+                  <span class="max-label">{{ assessment.maxScore }}</span>
+                </div>
+              </div>
+
+              <div class="grade-info">
+                <div class="grade-badge" [class]="getGradeClass()">
+                  {{ getGrade() }}
+                </div>
+                <div class="performance-text">
+                  {{ getPerformanceText() }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="additional-info" *ngIf="assessment.studentSubject.subject.description">
+          <div class="info-card">
+            <div class="card-header">
+              <i class="fas fa-info-circle"></i>
+              <h3>Subject Description</h3>
+            </div>
+            <div class="card-content">
+              <p>{{ assessment.studentSubject.subject.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

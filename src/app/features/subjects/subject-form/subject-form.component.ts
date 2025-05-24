@@ -190,7 +190,7 @@ export class SubjectFormComponent implements OnInit {
   getCategoryDisplayName(category: SubjectCategory): string {
     const categoryNames: { [key in SubjectCategory]: string } = {
       [SubjectCategory.SCIENCES]: 'Sciences',
-      [SubjectCategory.HUMANITIES]: 'Arts/Humanities',
+      [SubjectCategory.HUMANITIES]: 'Humanities',
       [SubjectCategory.LANGUAGES]: 'Languages',
       [SubjectCategory.MATHEMATICS]: 'Mathematics',
       [SubjectCategory.TECHNICAL]: 'Technical',

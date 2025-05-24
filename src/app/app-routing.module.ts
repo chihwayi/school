@@ -11,6 +11,24 @@ import { SubjectListComponent } from './features/subjects/subject-list/subject-l
 import { SubjectFormComponent } from './features/subjects/subject-form/subject-form.component';
 import { StudentDetailComponent } from './features/students/student-detail/student-detail.component';
 import { StudentFormComponent } from './features/students/student-form/student-form.component';
+import { SubjectDetailComponent } from './features/subjects/subject-detail/subject-detail.component';
+import { TeacherListComponent } from './features/teachers/teacher-list/teacher-list.component';
+import { TeacherFormComponent } from './features/teachers/teacher-form/teacher-form.component';
+import { ClassListComponent } from './features/classes/class-list/class-list.component';
+import { ClassFormComponent } from './features/classes/class-form/class-form.component';
+import { ClassDetailComponent } from './features/classes/class-detail/class-detail.component';
+import { TeacherDetailComponent } from './features/teachers/teacher-detail/teacher-detail.component';
+import { AssessmentDetailComponent } from './features/assessments/assessment-detail/assessment-detail.component';
+import { AssessmentFormComponent } from './features/assessments/assessment-form/assessment-form.component';
+import { AssessmentListComponent } from './features/assessments/assessment-list/assessment-list.component';
+import { AttendanceListComponent } from './features/attendance/attendance-list/attendance-list.component';
+import { MarkAttendanceComponent } from './features/attendance/mark-attendance/mark-attendance.component';
+import { StudentAttendanceComponent } from './features/attendance/student-attendance/student-attendance.component';
+import { ReportListComponent } from './features/reports/report-list/report-list.component';
+import { StudentReportComponent } from './features/reports/student-report/student-report.component';
+import { ClassReportComponent } from './features/reports/class-report/class-report.component';
+import { UserProfileComponent } from './features/profile/user-profile/user-profile.component';
+import { UnauthorizedComponent } from './features/unauthorized/unauthorized/unauthorized.component';
 
 const routes: Routes = [
   // Public routes
@@ -72,23 +90,23 @@ const routes: Routes = [
         children: [
           { 
             path: '', 
-            // component: TeacherListComponent // Add this when created
+            component: TeacherListComponent
           },
           { 
             path: 'new', 
             canActivate: [RoleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
-            // component: TeacherFormComponent // Add this when created
+            component: TeacherFormComponent
           },
           { 
             path: ':id', 
-            // component: TeacherDetailComponent // Add this when created
+            component: TeacherDetailComponent
           },
           { 
             path: ':id/edit',
             canActivate: [RoleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
-            // component: TeacherFormComponent // Add this when created
+            component: TeacherFormComponent
           }
         ]
       },
@@ -101,23 +119,23 @@ const routes: Routes = [
         children: [
           { 
             path: '', 
-            // component: ClassListComponent // Add this when created
+            component: ClassListComponent
           },
           { 
             path: 'new', 
             canActivate: [RoleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
-            // component: ClassFormComponent // Add this when created
+            component: ClassFormComponent
           },
           { 
             path: ':id', 
-            // component: ClassDetailComponent // Add this when created
+            component: ClassDetailComponent
           },
           { 
             path: ':id/edit',
             canActivate: [RoleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
-            // component: ClassFormComponent // Add this when created
+            component: ClassFormComponent
           }
         ]
       },
@@ -140,7 +158,7 @@ const routes: Routes = [
           },
           { 
             path: ':id', 
-            // component: SubjectDetailComponent // Add this when created
+            component: SubjectDetailComponent 
           },
           { 
             path: ':id/edit',
@@ -159,23 +177,23 @@ const routes: Routes = [
         children: [
           { 
             path: '', 
-            // component: AssessmentListComponent // Add this when created
+            component: AssessmentListComponent 
           },
           { 
             path: 'new', 
             canActivate: [RoleGuard],
             data: { roles: ['TEACHER'] },
-            // component: AssessmentFormComponent // Add this when created
+            component: AssessmentFormComponent 
           },
           { 
             path: ':id', 
-            // component: AssessmentDetailComponent // Add this when created
+            component: AssessmentDetailComponent 
           },
           { 
             path: ':id/edit',
             canActivate: [RoleGuard],
             data: { roles: ['TEACHER'] },
-            // component: AssessmentFormComponent // Add this when created
+            component: AssessmentFormComponent 
           }
         ]
       },
@@ -188,15 +206,15 @@ const routes: Routes = [
         children: [
           { 
             path: '', 
-            // component: ReportListComponent // Add this when created
+            component: ReportListComponent
           },
           { 
             path: 'student/:id', 
-            // component: StudentReportComponent // Add this when created
+            component: StudentReportComponent
           },
           { 
             path: 'class/:id', 
-            // component: ClassReportComponent // Add this when created
+            component: ClassReportComponent 
           }
         ]
       },
@@ -209,15 +227,15 @@ const routes: Routes = [
         children: [
           { 
             path: '', 
-            // component: AttendanceListComponent // Add this when created
+            component: AttendanceListComponent 
           },
           { 
             path: 'mark', 
-            // component: MarkAttendanceComponent // Add this when created
+            component: MarkAttendanceComponent
           },
           { 
             path: 'student/:id', 
-            // component: StudentAttendanceComponent // Add this when created
+            component: StudentAttendanceComponent
           }
         ]
       },
@@ -226,13 +244,13 @@ const routes: Routes = [
       {
         path: 'profile',
         canActivate: [AuthGuard],
-        // component: UserProfileComponent // Add this when created
+        component: UserProfileComponent 
       },
       
       // Unauthorized route
       {
         path: 'unauthorized',
-        // component: UnauthorizedComponent // Add this when created
+        component: UnauthorizedComponent 
       },
       
       // Default route

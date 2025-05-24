@@ -43,7 +43,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "@angular/material/prebuilt-themes/cyan-orange.css",
               "src/styles.scss",
-              "src/assets/styles/variables.scss"
+              "src/variables.scss"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
@@ -112,7 +112,7 @@
             "styles": [
               "@angular/material/prebuilt-themes/cyan-orange.css",
               "src/styles.scss",
-              "src/assets/styles/variables.scss"
+              "src/variables.scss"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"

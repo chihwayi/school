@@ -1,0 +1,191 @@
+<div class="teacher-detail-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <button class="btn btn-outline-secondary me-3" (click)="goBack()">
+        <i class="fas fa-arrow-left me-2"></i>Back to Teachers
+      </button>
+      <h1 class="page-title">Teacher Details</h1>
+    </div>
+    
+    <div class="header-actions" *ngIf="teacher && !loading">
+      <button 
+        class="btn btn-primary me-2" 
+        (click)="editTeacher()" 
+        *ngIf="canEdit">
+        <i class="fas fa-edit me-2"></i>Edit
+      </button>
+      <button 
+        class="btn btn-danger" 
+        (click)="deleteTeacher()" 
+        *ngIf="canDelete">
+        <i class="fas fa-trash me-2"></i>Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="text-center py-5" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="mt-3">Loading teacher details...</div>
+  </div>
+
+  <!-- Error State -->
+  <div class="alert alert-danger" *ngIf="error && !loading">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+  </div>
+
+  <!-- Teacher Details -->
+  <div class="teacher-details" *ngIf="teacher && !loading">
+    <!-- Basic Information Card -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title mb-0">
+          <i class="fas fa-user me-2"></i>Basic Information
+        </h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="info-group">
+              <label class="info-label">Full Name:</label>
+              <div class="info-value">{{ teacher.firstName }} {{ teacher.lastName }}</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="info-group">
+              <label class="info-label">Employee ID:</label>
+              <div class="info-value">{{ teacher.employeeId }}</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6" *ngIf="teacher.user">
+            <div class="info-group">
+              <label class="info-label">Username:</label>
+              <div class="info-value">{{ teacher.user.username }}</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6" *ngIf="teacher.user">
+            <div class="info-group">
+              <label class="info-label">Email:</label>
+              <div class="info-value">{{ teacher.user.email }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject Assignments Card -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title mb-0">
+          <i class="fas fa-book me-2"></i>Subject Assignments
+        </h3>
+      </div>
+      <div class="card-body">
+        <div *ngIf="assignedSubjectsAndClasses.length === 0" class="text-muted">
+          <i class="fas fa-info-circle me-2"></i>
+          No subject assignments found.
+        </div>
+        
+        <div class="table-responsive" *ngIf="assignedSubjectsAndClasses.length > 0">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Subject Code</th>
+                <th>Class</th>
+                <th>Academic Year</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let assignment of assignedSubjectsAndClasses">
+                <td>{{ assignment.subject.name }}</td>
+                <td>
+                  <span class="badge bg-secondary">{{ assignment.subject.code }}</span>
+                </td>
+                <td>
+                  <span class="badge bg-primary">{{ assignment.form }} {{ assignment.section }}</span>
+                </td>
+                <td>{{ assignment.academicYear }}</td>
+                <td>
+                  <span class="badge bg-info">{{ assignment.subject.category }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class Teacher Assignments Card -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title mb-0">
+          <i class="fas fa-users me-2"></i>Class Teacher Assignments
+        </h3>
+      </div>
+      <div class="card-body">
+        <div *ngIf="supervisedClasses.length === 0" class="text-muted">
+          <i class="fas fa-info-circle me-2"></i>
+          No class teacher assignments found.
+        </div>
+        
+        <div class="row" *ngIf="supervisedClasses.length > 0">
+          <div class="col-md-6 col-lg-4 mb-3" *ngFor="let classGroup of supervisedClasses">
+            <div class="card border-success">
+              <div class="card-body text-center">
+                <i class="fas fa-graduation-cap text-success mb-2 fa-2x"></i>
+                <h5 class="card-title">{{ classGroup.form }} {{ classGroup.section }}</h5>
+                <p class="card-text text-muted">{{ classGroup.academicYear }}</p>
+                <span class="badge bg-success">Class Teacher</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Card -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title mb-0">
+          <i class="fas fa-chart-bar me-2"></i>Statistics
+        </h3>
+      </div>
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-md-4">
+            <div class="stat-item">
+              <i class="fas fa-book text-primary fa-2x mb-2"></i>
+              <h4 class="stat-number">{{ assignedSubjectsAndClasses.length }}</h4>
+              <p class="stat-label">Subject Assignments</p>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="stat-item">
+              <i class="fas fa-users text-success fa-2x mb-2"></i>
+              <h4 class="stat-number">{{ supervisedClasses.length }}</h4>
+              <p class="stat-label">Classes Supervised</p>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="stat-item">
+              <i class="fas fa-calendar-alt text-info fa-2x mb-2"></i>
+              <h4 class="stat-number">{{ currentYear }}</h4>
+              <p class="stat-label">Current Year</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

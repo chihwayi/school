@@ -1,0 +1,222 @@
+.teacher-detail-container {
+  padding: 1.5rem;
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    
+    .header-content {
+      display: flex;
+      align-items: center;
+      
+      .page-title {
+        margin: 0;
+        color: #2c3e50;
+        font-weight: 600;
+      }
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+  
+  .card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    
+    .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      padding: 1rem 1.5rem;
+      
+      .card-title {
+        color: #2c3e50;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        
+        i {
+          color: #007bff;
+        }
+      }
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+  
+  .info-group {
+    margin-bottom: 1rem;
+    
+    .info-label {
+      font-weight: 600;
+      color: #6c757d;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+    
+    .info-value {
+      color: #2c3e50;
+      font-size: 1rem;
+      padding: 0.5rem 0;
+    }
+  }
+  
+  .table {
+    margin-bottom: 0;
+    
+    thead th {
+      background-color: #f8f9fa;
+      border-bottom: 2px solid #dee2e6;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    tbody tr {
+      &:hover {
+        background-color: #f8f9fa;
+      }
+    }
+  }
+  
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    
+    &.bg-secondary {
+      background-color: #6c757d !important;
+    }
+    
+    &.bg-primary {
+      background-color: #007bff !important;
+    }
+    
+    &.bg-info {
+      background-color: #17a2b8 !important;
+    }
+    
+    &.bg-success {
+      background-color: #28a745 !important;
+    }
+  }
+  
+  .stat-item {
+    padding: 1rem;
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 0.5rem 0;
+    }
+    
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.875rem;
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+  
+  .text-muted {
+    color: #6c757d !important;
+    font-style: italic;
+  }
+  
+  .btn {
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    
+    &.btn-outline-secondary {
+      border-color: #6c757d;
+      color: #6c757d;
+      
+      &:hover {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+      }
+    }
+    
+    &.btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      
+      &:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+      }
+    }
+    
+    &.btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+      
+      &:hover {
+        background-color: #c82333;
+        border-color: #c82333;
+      }
+    }
+  }
+  
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .alert {
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .teacher-detail-container {
+    padding: 1rem;
+    
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      
+      .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+        
+        .btn {
+          flex: 1;
+          max-width: 120px;
+        }
+      }
+    }
+    
+    .table-responsive {
+      border-radius: 6px;
+      border: 1px solid #dee2e6;
+    }
+    
+    .stat-item {
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      
+      .stat-number {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}

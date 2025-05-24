@@ -1,0 +1,153 @@
+<div class="class-detail-container">
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading class details...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ error }}
+    </div>
+    <button class="btn btn-primary" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+      Back to Classes
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div *ngIf="!loading && !error && classGroup" class="class-detail-content">
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="title-section">
+          <button class="btn btn-link back-btn" (click)="goBack()">
+            <i class="fas fa-arrow-left"></i>
+            Back to Classes
+          </button>
+          <h1>{{ getClassDisplayName() }}</h1>
+          <span class="academic-year">Academic Year: {{ classGroup.academicYear }}</span>
+        </div>
+        
+        <div class="action-buttons" *ngIf="canEdit || canDelete">
+          <button 
+            *ngIf="canEdit" 
+            class="btn btn-outline-primary" 
+            (click)="editClass()">
+            <i class="fas fa-edit"></i>
+            Edit Class
+          </button>
+          <button 
+            *ngIf="canDelete" 
+            class="btn btn-outline-danger" 
+            (click)="deleteClass()">
+            <i class="fas fa-trash"></i>
+            Delete Class
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Class Information Cards -->
+    <div class="info-cards-grid">
+      <!-- Class Teacher Card -->
+      <div class="info-card">
+        <div class="card-header">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <h3>Class Teacher</h3>
+        </div>
+        <div class="card-content">
+          <p class="teacher-name">{{ getClassTeacherName() }}</p>
+          <span class="teacher-id" *ngIf="classGroup.classTeacher">
+            Employee ID: {{ classGroup.classTeacher.employeeId }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Statistics Card -->
+      <div class="info-card">
+        <div class="card-header">
+          <i class="fas fa-chart-bar"></i>
+          <h3>Class Statistics</h3>
+        </div>
+        <div class="card-content">
+          <div class="stat-item">
+            <span class="stat-label">Total Students:</span>
+            <span class="stat-value">{{ totalStudents }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Form:</span>
+            <span class="stat-value">{{ classGroup.form }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Section:</span>
+            <span class="stat-value">{{ classGroup.section }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Students Section -->
+    <div class="section">
+      <div class="section-header">
+        <h2>
+          <i class="fas fa-users"></i>
+          Students in Class
+        </h2>
+        <span class="student-count">{{ totalStudents }} student(s)</span>
+      </div>
+
+      <!-- Students loading state -->
+      <div *ngIf="studentsLoading" class="loading-container small">
+        <div class="spinner small"></div>
+        <p>Loading students...</p>
+      </div>
+
+      <!-- No students message -->
+      <div *ngIf="!studentsLoading && students.length === 0" class="empty-state">
+        <i class="fas fa-user-slash"></i>
+        <h3>No Students Enrolled</h3>
+        <p>This class doesn't have any students enrolled yet.</p>
+      </div>
+
+      <!-- Students table -->
+      <div *ngIf="!studentsLoading && students.length > 0" class="students-table-container">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Level</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of students; trackBy: trackByStudentId" class="student-row">
+              <td class="student-id">{{ student.studentId }}</td>
+              <td class="student-name">{{ getStudentDisplayName(student) }}</td>
+              <td>
+                <span 
+                  class="level-badge" 
+                  [class.o-level]="getStudentLevel(student) === 'O-Level'"
+                  [class.a-level]="getStudentLevel(student) === 'A-Level'">
+                  {{ getStudentLevel(student) }}
+                </span>
+              </td>
+              <td class="actions">
+                <button 
+                  class="btn btn-sm btn-outline-primary" 
+                  (click)="viewStudent(student)"
+                  title="View Student Details">
+                  <i class="fas fa-eye"></i>
+                  View
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

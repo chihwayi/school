@@ -15,9 +15,6 @@ import { FooterComponent } from './layouts/footer/footer.component';
 import { SidebarComponent } from './layouts/sidebar/sidebar.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { ClassesComponent } from './features/classes/classes.component';
-import { AssessmentsComponent } from './features/assessments/assessments.component';
-import { ReportsComponent } from './features/reports/reports.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SubjectListComponent } from './features/subjects/subject-list/subject-list.component';
 import { SubjectFormComponent } from './features/subjects/subject-form/subject-form.component';
@@ -27,6 +24,21 @@ import { StudentDetailComponent } from './features/students/student-detail/stude
 import { SubjectDetailComponent } from './features/subjects/subject-detail/subject-detail.component';
 import { TeacherListComponent } from './features/teachers/teacher-list/teacher-list.component';
 import { TeacherFormComponent } from './features/teachers/teacher-form/teacher-form.component';
+import { TeacherDetailComponent } from './features/teachers/teacher-detail/teacher-detail.component';
+import { ClassListComponent } from './features/classes/class-list/class-list.component';
+import { ClassFormComponent } from './features/classes/class-form/class-form.component';
+import { ClassDetailComponent } from './features/classes/class-detail/class-detail.component';
+import { AssessmentListComponent } from './features/assessments/assessment-list/assessment-list.component';
+import { AssessmentFormComponent } from './features/assessments/assessment-form/assessment-form.component';
+import { AssessmentDetailComponent } from './features/assessments/assessment-detail/assessment-detail.component';
+import { ReportListComponent } from './features/reports/report-list/report-list.component';
+import { StudentReportComponent } from './features/reports/student-report/student-report.component';
+import { AttendanceListComponent } from './features/attendance/attendance-list/attendance-list.component';
+import { MarkAttendanceComponent } from './features/attendance/mark-attendance/mark-attendance.component';
+import { StudentAttendanceComponent } from './features/attendance/student-attendance/student-attendance.component';
+import { ClassReportComponent } from './features/reports/class-report/class-report.component';
+import { UserProfileComponent } from './features/profile/user-profile/user-profile.component';
+import { UnauthorizedComponent } from './features/unauthorized/unauthorized/unauthorized.component';
 
 @NgModule({
   declarations: [
@@ -38,9 +50,6 @@ import { TeacherFormComponent } from './features/teachers/teacher-form/teacher-f
     SidebarComponent,
     MainLayoutComponent,
     DashboardComponent,
-    ClassesComponent,
-    AssessmentsComponent,
-    ReportsComponent,
     SubjectListComponent,
     SubjectFormComponent,
     StudentListComponent,
@@ -48,7 +57,22 @@ import { TeacherFormComponent } from './features/teachers/teacher-form/teacher-f
     StudentDetailComponent,
     SubjectDetailComponent,
     TeacherListComponent,
-    TeacherFormComponent
+    TeacherFormComponent,
+    TeacherDetailComponent,
+    ClassListComponent,
+    ClassFormComponent,
+    ClassDetailComponent,
+    AssessmentListComponent,
+    AssessmentFormComponent,
+    AssessmentDetailComponent,
+    ReportListComponent,
+    StudentReportComponent,
+    AttendanceListComponent,
+    MarkAttendanceComponent,
+    StudentAttendanceComponent,
+    ClassReportComponent,
+    UserProfileComponent,
+    UnauthorizedComponent
   ],
   imports: [
     BrowserModule,

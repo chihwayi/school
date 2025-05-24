@@ -1,0 +1,202 @@
+<div class="student-report-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading student report...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ error }}
+    </div>
+    <button class="btn btn-primary" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+      Back to Reports
+    </button>
+  </div>
+
+  <!-- Report Content -->
+  <div *ngIf="!loading && !error && student" class="report-content">
+    <!-- Report Header -->
+    <div class="report-header">
+      <div class="header-content">
+        <button class="btn btn-link back-btn" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Back to Reports
+        </button>
+        
+        <div class="report-title">
+          <h1>Student Report Card</h1>
+          <div class="report-meta">
+            <span class="term">{{ term }}</span>
+            <span class="year">{{ academicYear }}</span>
+          </div>
+        </div>
+        
+        <div class="header-actions">
+          <button class="btn btn-outline-primary" (click)="generatePDF()">
+            <i class="fas fa-download"></i>
+            Download PDF
+          </button>
+          
+          <button 
+            *ngIf="canEditComments && !editingComments"
+            class="btn btn-primary" 
+            (click)="startEditingComments()">
+            <i class="fas fa-edit"></i>
+            Edit Comments
+          </button>
+          
+          <div *ngIf="editingComments" class="edit-actions">
+            <button class="btn btn-success" (click)="saveComments()">
+              <i class="fas fa-save"></i>
+              Save
+            </button>
+            <button class="btn btn-outline-secondary" (click)="cancelEditingComments()">
+              <i class="fas fa-times"></i>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Information -->
+    <div class="student-info-section">
+      <div class="info-card">
+        <div class="student-details">
+          <div class="avatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <div class="details">
+            <h2>{{ student.firstName }} {{ student.lastName }}</h2>
+            <div class="meta-info">
+              <span class="student-id">ID: {{ student.studentId }}</span>
+              <span class="class-info">{{ student.form }} {{ student.section }}</span>
+              <span class="level-badge" [class]="student.level.toLowerCase()">{{ student.level }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="overall-grade">
+          <div class="grade-display">
+            <div class="grade-value" [class]="getGradeClass(getOverallGrade())">
+              {{ getOverallGrade() }}
+            </div>
+            <div class="percentage">{{ getOverallPercentage() }}%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject Reports -->
+    <div class="subjects-section">
+      <h3>Subject Performance</h3>
+      
+      <div *ngIf="subjectReports.length === 0" class="no-assessments">
+        <i class="fas fa-clipboard-list"></i>
+        <h4>No Assessments Found</h4>
+        <p>No assessments have been recorded for this student in {{ term }} {{ academicYear }}.</p>
+      </div>
+      
+      <div class="subjects-grid">
+        <div *ngFor="let report of subjectReports" class="subject-card">
+          <div class="subject-header">
+            <div class="subject-info">
+              <h4>{{ report.subject.name }}</h4>
+              <span class="subject-code">{{ report.subject.code }}</span>
+            </div>
+            <div class="subject-grade" [class]="getGradeClass(report.grade)">
+              {{ report.grade }}
+            </div>
+          </div>
+          
+          <div class="subject-scores">
+            <div class="score-item">
+              <span class="label">Coursework Average:</span>
+              <span class="value">{{ report.courseworkAverage.toFixed(1) }}%</span>
+            </div>
+            <div class="score-item">
+              <span class="label">Exam Score:</span>
+              <span class="value">{{ report.examScore.toFixed(1) }}%</span>
+            </div>
+            <div class="score-item total">
+              <span class="label">Total Score:</span>
+              <span class="value">{{ report.totalScore.toFixed(1) }}%</span>
+            </div>
+          </div>
+          
+          <div class="subject-comment">
+            <label>Teacher Comment:</label>
+            <div *ngIf="!editingComments" class="comment-display">
+              {{ report.comment || 'No comment provided' }}
+            </div>
+            <textarea 
+              *ngIf="editingComments"
+              [(ngModel)]="subjectComments[report.subject.id]"
+              class="form-control comment-input"
+              rows="3"
+              placeholder="Enter subject comment...">
+            </textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overall Comment -->
+    <div class="overall-comment-section">
+      <div class="comment-card">
+        <h3>Overall Performance Comment</h3>
+        <div *ngIf="!editingComments" class="comment-display">
+          <p>{{ overallComment || 'No overall comment provided' }}</p>
+        </div>
+        <div *ngIf="editingComments" class="comment-edit">
+          <textarea 
+            [(ngModel)]="editingOverallComment"
+            class="form-control overall-comment-input"
+            rows="4"
+            placeholder="Enter overall performance comment...">
+          </textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Summary -->
+    <div class="report-summary">
+      <div class="summary-stats">
+        <div class="stat-item">
+          <div class="stat-value">{{ subjectReports.length }}</div>
+          <div class="stat-label">Subjects</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ getPassedSubjects() }}</div>
+          <div class="stat-label">Passed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ getFailedSubjects() }}</div>
+          <div class="stat-label">Failed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ getClassRank() }}</div>
+          <div class="stat-label">Class Rank</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Term Selection -->
+    <div class="term-selection">
+      <h3>View Other Terms</h3>
+      <div class="term-buttons">
+        <button 
+          *ngFor="let termOption of availableTerms"
+          class="btn btn-outline-primary term-btn"
+          [class.active]="termOption === term"
+          (click)="changeTerm(termOption)">
+          {{ termOption }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,131 @@
+<div class="assessment-list-container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="header-content">
+          <div class="title-section">
+            <h1>
+              <i class="fas fa-clipboard-list"></i>
+              Assessments
+            </h1>
+            <p class="subtitle">Manage student assessments and grades</p>
+          </div>
+          
+          <div class="action-buttons" *ngIf="canCreateAssessment">
+            <button class="btn btn-primary" (click)="createAssessment()">
+              <i class="fas fa-plus"></i>
+              Record Assessment
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teacher's Subject Classes (for teachers) -->
+      <div *ngIf="isTeacher && teacherSubjectClasses.length > 0" class="subject-classes-section">
+        <h2>My Subject Classes</h2>
+        <div class="subject-classes-grid">
+          <div 
+            *ngFor="let subjectClass of teacherSubjectClasses" 
+            class="subject-class-card"
+            (click)="viewSubjectClassAssessments(subjectClass)">
+            <div class="card-header">
+              <h3>{{ subjectClass.subject.name }}</h3>
+              <span class="class-info">{{ subjectClass.form }} {{ subjectClass.section }}</span>
+            </div>
+            <div class="card-content">
+              <div class="info-item">
+                <span class="label">Subject Code:</span>
+                <span class="value">{{ subjectClass.subject.code }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Academic Year:</span>
+                <span class="value">{{ subjectClass.academicYear }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Assessments -->
+      <div class="recent-assessments-section">
+        <div class="section-header">
+          <h2>Recent Assessments</h2>
+          <div class="filters">
+            <select class="form-select" [(ngModel)]="selectedTerm" (change)="loadAssessments()">
+              <option value="">All Terms</option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
+            <select class="form-select" [(ngModel)]="selectedYear" (change)="loadAssessments()">
+              <option value="">All Years</option>
+              <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Loading state -->
+        <div *ngIf="loading" class="loading-container">
+          <div class="spinner"></div>
+          <p>Loading assessments...</p>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="!loading && assessments.length === 0" class="empty-state">
+          <i class="fas fa-clipboard"></i>
+          <h3>No Assessments Found</h3>
+          <p *ngIf="isTeacher">Start by recording assessments for your students.</p>
+          <p *ngIf="!isTeacher">No assessments have been recorded yet.</p>
+        </div>
+
+        <!-- Assessments table -->
+        <div *ngIf="!loading && assessments.length > 0" class="table-container">
+          <table class="assessments-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Student</th>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Score</th>
+                <th>Term</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let assessment of assessments" class="assessment-row">
+                <td>{{ formatDate(assessment.date) }}</td>
+                <td class="assessment-title">{{ assessment.title }}</td>
+                <td>{{ getStudentName(assessment) }}</td>
+                <td>{{ assessment.studentSubject.subject.name }}</td>
+                <td>
+                  <span class="type-badge" [class]="getTypeClass(assessment.type)">
+                    {{ assessment.type }}
+                  </span>
+                </td>
+                <td class="score">
+                  <span class="score-value">{{ assessment.score }}/{{ assessment.maxScore }}</span>
+                  <span class="percentage">({{ getPercentage(assessment) }}%)</span>
+                </td>
+                <td>{{ assessment.term }}</td>
+                <td class="actions">
+                  <button 
+                    class="btn btn-sm btn-outline-primary" 
+                    (click)="viewAssessment(assessment)"
+                    title="View Details">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button 
+                    *ngIf="canEditAssessment(assessment)"
+                    class="btn btn-sm btn-outline-secondary" 
+                    (click)="editAssessment(assessment)"
+                    title="Edit Assessment">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

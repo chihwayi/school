@@ -1,0 +1,189 @@
+<div class="attendance-list-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-calendar-check"></i>
+        Attendance Records
+      </h1>
+      <p class="page-description">View and manage daily attendance records</p>
+    </div>
+    <div class="header-actions" *ngIf="canMarkAttendance()">
+      <button 
+        class="btn btn-primary"
+        (click)="navigateToMarkAttendance()">
+        <i class="fas fa-plus"></i>
+        Mark Attendance
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="filters-row">
+          <div class="filter-group">
+            <label for="attendanceDate" class="form-label">Date</label>
+            <input 
+              type="date" 
+              id="attendanceDate"
+              class="form-control"
+              [(ngModel)]="selectedDate"
+              (change)="onDateChange()">
+          </div>
+          <div class="filter-group">
+            <label for="classFilter" class="form-label">Class (Optional)</label>
+            <select 
+              id="classFilter"
+              class="form-select"
+              [(ngModel)]="selectedClass">
+              <option value="">All Classes</option>
+              <option *ngFor="let cls of classes" [value]="cls.form + ' ' + cls.section">
+                {{ cls.form }} {{ cls.section }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="summary-card present">
+      <div class="card-icon">
+        <i class="fas fa-user-check"></i>
+      </div>
+      <div class="card-content">
+        <h3>{{ getPresentCount() }}</h3>
+        <p>Present</p>
+      </div>
+    </div>
+    
+    <div class="summary-card absent">
+      <div class="card-icon">
+        <i class="fas fa-user-times"></i>
+      </div>
+      <div class="card-content">
+        <h3>{{ getAbsentCount() }}</h3>
+        <p>Absent</p>
+      </div>
+    </div>
+    
+    <div class="summary-card total">
+      <div class="card-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="card-content">
+        <h3>{{ attendanceRecords.length }}</h3>
+        <p>Total Students</p>
+      </div>
+    </div>
+    
+    <div class="summary-card rate">
+      <div class="card-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="card-content">
+        <h3>{{ getAttendanceRate() }}%</h3>
+        <p>Attendance Rate</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ error }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading attendance records...</p>
+  </div>
+
+  <!-- Attendance Records Table -->
+  <div *ngIf="!loading && attendanceRecords.length > 0" class="attendance-table-card">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-list"></i>
+          Attendance Records for {{ selectedDate | date:'fullDate' }}
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Class</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let record of attendanceRecords; trackBy: trackByRecordId">
+                <td>
+                  <div class="student-info">
+                    <div class="student-avatar">
+                      {{ record.student.firstName.charAt(0) }}{{ record.student.lastName.charAt(0) }}
+                    </div>
+                    <div class="student-details">
+                      <div class="student-name">
+                        {{ record.student.firstName }} {{ record.student.lastName }}
+                      </div>
+                      <div class="student-id">ID: {{ record.student.studentId }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge class-badge">
+                    {{ record.student.form }} {{ record.student.section }}
+                  </span>
+                </td>
+                <td>
+                  <span 
+                    class="badge status-badge"
+                    [class.present]="record.present"
+                    [class.absent]="!record.present">
+                    <i [class]="record.present ? 'fas fa-check' : 'fas fa-times'"></i>
+                    {{ record.present ? 'Present' : 'Absent' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button 
+                      class="btn btn-sm btn-outline-primary"
+                      (click)="viewStudentAttendance(record.student.id)"
+                      title="View Student Attendance History">
+                      <i class="fas fa-history"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && attendanceRecords.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="fas fa-calendar-times"></i>
+    </div>
+    <h3>No Attendance Records</h3>
+    <p>No attendance records found for the selected date.</p>
+    <button 
+      *ngIf="canMarkAttendance()"
+      class="btn btn-primary"
+      (click)="navigateToMarkAttendance()">
+      <i class="fas fa-plus"></i>
+      Mark Attendance
+    </button>
+  </div>
+</div>
