@@ -8,8 +8,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SchoolSetupComponent } from './features/auth/school-setup/school-setup.component';
 import { LoginComponent } from './features/auth/login/login.component';
-import { AuthInterceptor } from './core/interceptors/auth.interceptor';
-import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { HeaderComponent } from './layouts/header/header.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { SidebarComponent } from './layouts/sidebar/sidebar.component';
@@ -85,8 +85,8 @@ import { UnauthorizedComponent } from './features/unauthorized/unauthorized/unau
   providers: [
     provideHttpClient(withFetch()),
     provideClientHydration(withEventReplay()),
-    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useValue: authInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useValue: errorInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
 })

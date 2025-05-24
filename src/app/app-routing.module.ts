@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { SchoolSetupComponent } from './features/auth/school-setup/school-setup.component';
-import { AuthGuard } from './core/guards/auth.guard';
+import { authGuard } from './core/guards/auth.guard';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
-import { RoleGuard } from './core/guards/role.guard.guard';
+import { roleGuard } from './core/guards/role.guard';
 import { StudentListComponent } from './features/students/student-list/student-list.component';
 import { SubjectListComponent } from './features/subjects/subject-list/subject-list.component';
 import { SubjectFormComponent } from './features/subjects/subject-form/subject-form.component';
@@ -45,7 +45,7 @@ const routes: Routes = [
   {
     path: '',
     component: MainLayoutComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     children: [
       // Dashboard
       { 
@@ -56,7 +56,7 @@ const routes: Routes = [
       // Student routes
       {
         path: 'students',
-        canActivate: [RoleGuard],
+        canActivate: [roleGuard],
         data: { roles: ['ADMIN', 'CLERK', 'TEACHER'] },
         children: [
           { 
@@ -65,7 +65,7 @@ const routes: Routes = [
           },
           { 
             path: 'new', 
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
             component: StudentFormComponent
           },
@@ -75,7 +75,7 @@ const routes: Routes = [
           },
           { 
             path: ':id/edit',
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
             component: StudentFormComponent 
           }
@@ -85,7 +85,7 @@ const routes: Routes = [
       // Teacher routes
       {
         path: 'teachers',
-        canActivate: [RoleGuard],
+        canActivate: [roleGuard],
         data: { roles: ['ADMIN', 'CLERK', 'TEACHER'] },
         children: [
           { 
@@ -94,7 +94,7 @@ const routes: Routes = [
           },
           { 
             path: 'new', 
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
             component: TeacherFormComponent
           },
@@ -104,7 +104,7 @@ const routes: Routes = [
           },
           { 
             path: ':id/edit',
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
             component: TeacherFormComponent
           }
@@ -114,7 +114,7 @@ const routes: Routes = [
       // Class routes
       {
         path: 'classes',
-        canActivate: [RoleGuard],
+        canActivate: [roleGuard],
         data: { roles: ['ADMIN', 'CLERK', 'TEACHER'] },
         children: [
           { 
@@ -123,7 +123,7 @@ const routes: Routes = [
           },
           { 
             path: 'new', 
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
             component: ClassFormComponent
           },
@@ -133,7 +133,7 @@ const routes: Routes = [
           },
           { 
             path: ':id/edit',
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
             component: ClassFormComponent
           }
@@ -143,7 +143,7 @@ const routes: Routes = [
       // Subject routes
       {
         path: 'subjects',
-        canActivate: [RoleGuard],
+        canActivate: [roleGuard],
         data: { roles: ['ADMIN', 'CLERK', 'TEACHER'] },
         children: [
           { 
@@ -152,7 +152,7 @@ const routes: Routes = [
           },
           { 
             path: 'new', 
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
             component: SubjectFormComponent 
           },
@@ -162,7 +162,7 @@ const routes: Routes = [
           },
           { 
             path: ':id/edit',
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['ADMIN', 'CLERK'] },
             component: SubjectFormComponent
           }
@@ -172,7 +172,7 @@ const routes: Routes = [
       // Assessment routes
       {
         path: 'assessments',
-        canActivate: [RoleGuard],
+        canActivate: [roleGuard],
         data: { roles: ['ADMIN', 'CLERK', 'TEACHER'] },
         children: [
           { 
@@ -181,7 +181,7 @@ const routes: Routes = [
           },
           { 
             path: 'new', 
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['TEACHER'] },
             component: AssessmentFormComponent 
           },
@@ -191,7 +191,7 @@ const routes: Routes = [
           },
           { 
             path: ':id/edit',
-            canActivate: [RoleGuard],
+            canActivate: [roleGuard],
             data: { roles: ['TEACHER'] },
             component: AssessmentFormComponent 
           }
@@ -201,7 +201,7 @@ const routes: Routes = [
       // Reports routes
       {
         path: 'reports',
-        canActivate: [RoleGuard],
+        canActivate: [roleGuard],
         data: { roles: ['ADMIN', 'CLERK', 'TEACHER'] },
         children: [
           { 
@@ -222,7 +222,7 @@ const routes: Routes = [
       // Attendance routes
       {
         path: 'attendance',
-        canActivate: [RoleGuard],
+        canActivate: [roleGuard],
         data: { roles: ['ADMIN', 'CLERK', 'TEACHER'] },
         children: [
           { 
@@ -243,7 +243,7 @@ const routes: Routes = [
       // Profile routes
       {
         path: 'profile',
-        canActivate: [AuthGuard],
+        canActivate: [authGuard],
         component: UserProfileComponent 
       },
       

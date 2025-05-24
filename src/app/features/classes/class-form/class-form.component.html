@@ -1,1 +1,146 @@
-<p>class-form works!</p>
+<div class="class-form-container">
+        <!-- Form Header -->
+        <div class="form-header">
+            <h1 class="form-title">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>{{ isEditMode ? 'Edit Class' : 'Create New Class' }}</span>
+            </h1>
+            <p class="form-subtitle">
+                {{ isEditMode ? 'Update class information and assignments' : 'Set up a new class with form, section, and academic year details' }}
+            </p>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-spinner">
+            <div class="spinner"></div>
+            <span>Loading class details...</span>
+        </div>
+
+        <!-- Error Alert -->
+        <div *ngIf="error" class="error-alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>{{ error }}</span>
+        </div>
+
+        <!-- Class Form -->
+        <form *ngIf="!loading" [formGroup]="classForm" (ngSubmit)="onSubmit()" class="class-form" novalidate>
+            
+            <!-- Form and Section Row -->
+            <div class="form-row">
+                <!-- Form Selection -->
+                <div class="form-group">
+                    <label for="form" class="form-label">
+                        Form Level
+                        <span class="required-asterisk">*</span>
+                    </label>
+                    <select 
+                        id="form"
+                        formControlName="form"
+                        class="form-control"
+                        [class.is-invalid]="isFieldInvalid('form')">
+                        <option value="">Select Form</option>
+                        <option *ngFor="let form of formOptions" [value]="form">{{ form }}</option>
+                    </select>
+                    <div *ngIf="isFieldInvalid('form')" class="invalid-feedback">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ getFieldError('form') }}
+                    </div>
+                </div>
+
+                <!-- Section Input -->
+                <div class="form-group">
+                    <label for="section" class="form-label">
+                        Section/Class Name
+                        <span class="required-asterisk">*</span>
+                    </label>
+                    <input 
+                        type="text"
+                        id="section"
+                        formControlName="section"
+                        class="form-control"
+                        [class.is-invalid]="isFieldInvalid('section')"
+                        placeholder="e.g., A, B, Red, Blue">
+                    <div *ngIf="isFieldInvalid('section')" class="invalid-feedback">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ getFieldError('section') }}
+                    </div>
+                    
+                    <!-- Section Suggestions -->
+                    <div class="section-suggestions">
+                        <div class="suggestion-label">Common section names:</div>
+                        <div class="suggestion-chips">
+                            <span 
+                                *ngFor="let suggestion of generateSectionSuggestions()"
+                                class="suggestion-chip"
+                                (click)="classForm.patchValue({section: suggestion})">
+                                {{ suggestion }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Year and Class Teacher Row -->
+            <div class="form-row">
+                <!-- Academic Year -->
+                <div class="form-group">
+                    <label for="academicYear" class="form-label">
+                        Academic Year
+                        <span class="required-asterisk">*</span>
+                    </label>
+                    <select 
+                        id="academicYear"
+                        formControlName="academicYear"
+                        class="form-control"
+                        [class.is-invalid]="isFieldInvalid('academicYear')">
+                        <option *ngFor="let year of yearOptions" [value]="year">{{ year }}</option>
+                    </select>
+                    <div *ngIf="isFieldInvalid('academicYear')" class="invalid-feedback">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ getFieldError('academicYear') }}
+                    </div>
+                </div>
+
+                <!-- Class Teacher -->
+                <div class="form-group">
+                    <label for="classTeacherId" class="form-label">
+                        Class Teacher (Optional)
+                    </label>
+                    <select 
+                        id="classTeacherId"
+                        formControlName="classTeacherId"
+                        class="form-control">
+                        <option value="">Select Class Teacher</option>
+                        <option *ngFor="let teacher of teachers" [value]="teacher.id">
+                            {{ teacher.firstName }} {{ teacher.lastName }}
+                            <span *ngIf="teacher.employeeId"> ({{ teacher.employeeId }})</span>
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button 
+                    type="button" 
+                    class="btn btn-secondary"
+                    (click)="cancel()"
+                    [disabled]="saving">
+                    <i class="fas fa-times"></i>
+                    <span class="btn-text">Cancel</span>
+                </button>
+                
+                <button 
+                    type="submit" 
+                    class="btn btn-primary"
+                    [class.btn-loading]="saving"
+                    [disabled]="saving || classForm.invalid">
+                    <div *ngIf="saving" class="btn-spinner"></div>
+                    <i *ngIf="!saving" class="fas" [class.fa-plus]="!isEditMode" [class.fa-save]="isEditMode"></i>
+                    <span class="btn-text">
+                        {{ saving ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Class' : 'Create Class') }}
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
